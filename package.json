@@ -22,10 +22,15 @@
   "dependencies": {
     "@nestjs/common": "^5.4.0",
     "@nestjs/core": "^5.4.0",
+    "@nestjs/typeorm": "^5.2.2",
+    "basic-auth": "^2.0.1",
+    "pg": "^7.8.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.2.2",
-    "typescript": "^3.0.1"
+    "typeorm": "^0.2.12",
+    "typescript": "^3.0.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@nestjs/testing": "^5.1.0",
