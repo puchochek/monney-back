@@ -6,6 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NewExpence } from './expence.dto';
 
+import * as bcrypt from 'bcrypt';
+
+    const saltRounds = 10;
+    const myPlaintextPassword = 's0/\/\P4$$w0rD';
+
 @Injectable()
 export class AppService {
 
@@ -18,7 +23,7 @@ export class AppService {
     return await this.expenceRepository.find();
   }
 
-  async saveNewExpence(newExpence: any) : Promise<Expence[]> {
+  async saveNewExpence(newExpence: any): Promise<Expence[]> {
     return await this.expenceRepository.save(newExpence);
   }
 
@@ -50,4 +55,23 @@ export class AppService {
     const date = new Date(year + '-' + month + '-' + day);
     return date;
   }
+
+  encryptPassword(password: string): boolean {
+    let isHashed: boolean;
+    bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+      console.log('hash ', hash);
+      console.log('hash ', hash);
+      isHashed = hash ? true : false;
+      
+      // Store hash in your password DB.
+    });
+    return isHashed;
+  }
+
+  // hashPassword(password: ) {
+  //   bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+  //     console.log('hash ', hash);
+  //     // Store hash in your password DB.
+  //   });
+  // }
 }
