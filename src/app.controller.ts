@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Expence } from './app.entity';
+import { AppUser } from './user.entity';
 import { NewExpence } from './expence.dto';
 import { User } from './user.dto';
 
@@ -27,21 +28,22 @@ export class AppController {
   }
 
   @Post(':login')
-  async hashPassword(@Body() password: User): Promise<boolean> {
-    console.log('post with param');
-    let res: boolean;
-    const result: Expence[] = await this.appService.saveNewExpence(password);
+  async hashPassword(@Body() user: User): Promise<AppUser[]>  {
+    const userToSave = user;
+    // TODO add validation for all params
+    userToSave.id = this.appService.getId();
+    userToSave.name = this.appService.validateUserName(user.name);
+    userToSave.email = user.email;
+    userToSave.password = this.appService.hashPassword(user.password);
+    const result: User[] = await this.appService.saveNewUser(userToSave);
     if (!result) {
       console.log('Error');
-      res = false;
     }
-    else res = true;
-    return res;
+    return result;
   }
 
   @Post()
   async createNewExpence(@Body() newExpence: NewExpence): Promise<Expence[]> {
-    console.log('post without param');
     const expenceToSave = newExpence;
     expenceToSave.id = this.appService.getId();
     expenceToSave.date = this.appService.parseDate(newExpence.dateToParse);
