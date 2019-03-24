@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
+import { UserController } from './user/user.controller';
 import { AppService } from './app.service';
+import { UserService } from './user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { Expence } from './app.entity';
@@ -9,6 +11,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getConnection } from 'typeorm';
+import { UserModule } from './user/user.module';
+import { ExpenceModule } from './expence/expence.module';
 
 @Module({
   imports: [
@@ -24,14 +28,16 @@ import { getConnection } from 'typeorm';
         __dirname + '/../**/*.entity{.ts,.js}',
       ],
       extra: {
-        ssl: true
+        ssl: true,
       },
       synchronize: true,
     }),
     TypeOrmModule.forFeature([Expence]),
     TypeOrmModule.forFeature([AppUser]),
+    UserModule,
+    ExpenceModule,
   ],
-  controllers: [AppController,],
-  providers: [AppService,],
+  controllers: [AppController, UserController],
+  providers: [AppService, UserService],
 })
 export class AppModule { }
