@@ -15,7 +15,6 @@ export class UserService {
       ) {}
 
     hashPassword(password: string): string {
-        console.log('hashPassword ', password, saltRounds);
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
         console.log('hashedPass ', hashedPassword);
 
@@ -23,19 +22,22 @@ export class UserService {
     }
 
     validateUserName(name: string): string {
-        return name.length === 0 ? 'User' : name;
+        return name ? name : 'User';
     }
 
     validateEmail(email: string): string {
         const expression = /\S+@\S+/;
         // TODO What to do if email is invalid?
-        console.log('valid email ', expression.test(String(email).toLowerCase()))
         return expression.test(String(email).toLowerCase()) ? email : 'Error';
     }
 
     async saveNewUser(user: any): Promise<AppUser[]> {
         return await this.userRepository.save(user);
         // return [user];
+    }
+
+    async getUsers(): Promise<AppUser[]> {
+        return await this.userRepository.find();
     }
 
 }
