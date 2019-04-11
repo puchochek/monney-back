@@ -6,13 +6,14 @@ import { AppUser } from '../db/entities/user.entity';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { DbModule } from 'src/db/db.module';
+import { ServicesModule } from 'src/services/services.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Expence]),
     TypeOrmModule.forFeature([AppUser]),
-    UserModule,
     DbModule,
+    ServicesModule,
   ],
   controllers: [UserController],
   providers: [UserService, AppService],

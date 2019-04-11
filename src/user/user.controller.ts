@@ -7,8 +7,11 @@ import { LoginUserError } from '../errors/login-user';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService,
-    private appService: AppService) { }
+
+  constructor(
+    private userService: UserService,
+    private appService: AppService,
+  ) { }
 
   @Post(':login')
   async hashPassword(@Body() user: User): Promise<AppUser[]> {

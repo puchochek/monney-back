@@ -1,6 +1,10 @@
 import * as url from 'url';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
+
+// Get environment variable from .env file
+dotenv.config();
 
 if (!process.env.DATABASE_URL) {
   throw new Error('Set DATABASE_URL environment variable!');

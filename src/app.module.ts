@@ -10,10 +10,6 @@ import { UserModule } from './user/user.module';
 import { ExpenceModule } from './expence/expence.module';
 import { ServicesModule } from './services/services.module';
 import { DbModule } from './db/db.module';
-import * as dotenv from 'dotenv';
-
-// Get environment variable from .env file
-dotenv.config();
 
 @Module({
   imports: [
