@@ -1,5 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from './jwt.service';
 import * as dotenv from 'dotenv';
 
 // Get environment variable from .env file
@@ -10,7 +11,7 @@ export class EmailService {
 
   private server;
 
-  constructor() {
+  constructor(private jwtService: JwtService) {
     this.server = nodemailer.createTransport({
       service: 'SendGrid',
       auth: {
@@ -20,9 +21,13 @@ export class EmailService {
     });
   }
 
-  public sendRegistrationMail(emailAddres: string): Promise<any> {
-    //const token = this.jwtService.generateToken({ id }, '2 hours');
+  public sendRegistrationMail(emailAddres: string, id: string): Promise<any> {
+    const expiresIn = '2 hours';
+    const token = this.jwtService.generateToken(id, expiresIn);
+    console.log('token ', token);
     //const link = `${ConfigService.get().CLIENT_URL}/activate/${token}`;
+    const link = `process.env.CLIENT_URL/activate/${token}`;
+    console.log('link ', link);
 
     //const templatePath = __dirname + '/email-templates/registration.pug';
 

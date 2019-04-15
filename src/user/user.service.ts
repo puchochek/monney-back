@@ -32,12 +32,22 @@ export class UserService {
   }
 
   async saveNewUser(user: any): Promise<AppUser[]> {
-    const emailSendResult = await this.emailService.sendRegistrationMail('puchochek@gmail.com');
+    const createdUser = await this.userRepository.save(user);
+    console.log('createdUser ', createdUser);
+    let emaitToSendAuth: string;
+    let userId: string;
+    if (createdUser) {
+      emaitToSendAuth = createdUser.email;
+      userId = createdUser.id;
+    }
+
+    const emailSendResult = await this.emailService.sendRegistrationMail(emaitToSendAuth, userId);
 
     console.log('emailSendResult', emailSendResult);
 
-    return await this.userRepository.save(user);
-    // return [user];
+    return createdUser;
+
+    // return await this.userRepository.save(user);
 
     // this.emailService.sendRegistrationMail('puchochek@gmail.com')
     //   .then(emailSendResult => {

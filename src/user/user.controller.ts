@@ -13,6 +13,25 @@ export class UserController {
     private appService: AppService,
   ) { }
 
+  //  @Post(':token') {
+  //    async authorizeUser(@Body() token: string): Promise<AppUser[]> {
+
+      // let result: User[];
+
+      // try {
+      //   result = await this.userService.saveNewUser(userToSave);
+      // } catch {
+      //   console.log('no result');
+      //   throw new LoginUserError('Duplicate value. A User with such email address already exists.');
+      // }
+      // console.log('result LOGIN', result);
+  
+  //       return result;
+  //  }
+
+
+  // TODO Change logic to separate auth and login processes
+
   @Post(':login')
   async hashPassword(@Body() user: User): Promise<AppUser[]> {
     const userToSave = user;
@@ -32,8 +51,6 @@ export class UserController {
     }
     console.log('result LOGIN', result);
 
-    //TEST
-    this.getUsers();
     return result;
   }
 
@@ -56,8 +73,6 @@ export class UserController {
     }
     console.log('result AUTORIZE', result);
 
-    //TEST
-    this.getUsers();
     return result;
   }
 
