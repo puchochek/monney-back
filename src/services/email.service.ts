@@ -26,7 +26,7 @@ export class EmailService {
     const token = this.jwtService.generateToken(id, expiresIn);
     console.log('token ', token);
     //const link = `${ConfigService.get().CLIENT_URL}/activate/${token}`;
-    const link = `process.env.CLIENT_URL/activate/${token}`;
+    const link = `<a href="${process.env.CLIENT_URL}/activate/${token}">${process.env.CLIENT_URL}/activate/${token}</a>`;
     console.log('link ', link);
 
     //const templatePath = __dirname + '/email-templates/registration.pug';
@@ -36,7 +36,7 @@ export class EmailService {
       from: '"Monney" <puchochek@gmail.com>',
       to: emailAddres,
       subject: 'Confirm your email in Monney',
-      html: 'Hello',
+      html: `Hello ${link}`,
     });
   }
 

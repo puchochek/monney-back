@@ -36,6 +36,7 @@ export class UserService {
     console.log('createdUser ', createdUser);
     let emaitToSendAuth: string;
     let userId: string;
+
     if (createdUser) {
       emaitToSendAuth = createdUser.email;
       userId = createdUser.id;

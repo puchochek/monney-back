@@ -9,7 +9,7 @@ export class AppUser {
   @Column({ nullable: true })
   name: string;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true })
   email: string;
 
   @Column({ nullable: true })
