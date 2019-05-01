@@ -19,15 +19,12 @@ export class UserController {
 
   @Post('token')
   async authorizeUser(@Body() { token }: { token: string }): Promise<AppUser> {
-
-    const userId = this.jwtService.decodeJwt(token);
-    console.log('userId ', userId);
+    const userId = this.jwtService.decodeJwt(token).data;
     const USER_FIELDS = [
       'app_user.id',
       'app_user.name',
       'app_user.email',
       'app_user.password',
-
     ];
 
     const result = this.connection

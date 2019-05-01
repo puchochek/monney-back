@@ -22,6 +22,7 @@ export class EmailService {
   }
 
   public sendRegistrationMail(emailAddres: string, id: string): Promise<any> {
+    console.log('sendRegistrationMail');
     const expiresIn = '2 hours';
     const token = this.jwtService.generateToken(id, expiresIn);
     console.log('token ', token);

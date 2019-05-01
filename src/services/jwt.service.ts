@@ -4,21 +4,21 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class JwtService {
 
-  generateToken(id: string, expiresIn: string): string {
-// TODO Amend sign method
+  generateToken(id: string, expiresInVal: string): string {
+    const alg = 'HS256';
+    const JWT_SECRET = process.env.JWT_SECRET;
 
-    // jwt.sign(payload, this.JWT_SECRET, {
-    //   algorithm: alg,
-    //   expiresIn: expIn,
-    // });
-
-    return jwt.sign({ id }, expiresIn);
+    return jwt.sign(
+        { data: id },
+        JWT_SECRET,
+        { expiresIn: expiresInVal }
+      );
   }
 
-  decodeJwt(token: string): string {
+  decodeJwt(token: string): any {
     console.log('token ', token);
     const JWT_SECRET = process.env.JWT_SECRET;
-    let jwtDecoded: string;
+    let jwtDecoded: {};
     try {
       jwtDecoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
