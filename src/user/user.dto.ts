@@ -3,4 +3,5 @@ export class User {
   password: string;
   name: string;
   email: string;
+  isConfirmed: boolean;
 }

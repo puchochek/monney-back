@@ -16,7 +16,7 @@ export class UserService {
 
   hashPassword(password: string): string {
     const hashedPassword = bcrypt.hashSync(password, saltRounds);
-    console.log('hashedPass ', hashedPassword);
+    console.log('----> hashedPass ', hashedPassword);
 
     return hashedPassword ? hashedPassword : 'Error';
   }
@@ -33,7 +33,7 @@ export class UserService {
 
   async saveNewUser(user: any): Promise<AppUser[]> {
     const createdUser = await this.userRepository.save(user);
-    console.log('createdUser ', createdUser);
+    console.log('----> createdUser ', createdUser);
     let emaitToSendAuth: string;
     let userId: string;
 
@@ -44,9 +44,11 @@ export class UserService {
 
     const emailSendResult = await this.emailService.sendRegistrationMail(emaitToSendAuth, userId);
 
-    console.log('emailSendResult', emailSendResult);
+    console.log('----> emailSendResult', emailSendResult);
 
     return createdUser;
+
+    
 
     // return await this.userRepository.save(user);
 

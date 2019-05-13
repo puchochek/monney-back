@@ -18,30 +18,38 @@ export class UserController {
   ) { }
 
   @Post('token')
-  async authorizeUser(@Body() { token }: { token: string }): Promise<AppUser> {
+  async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
     const userId = this.jwtService.decodeJwt(token).data;
     const USER_FIELDS = [
       'app_user.id',
       'app_user.name',
       'app_user.email',
       'app_user.password',
+      'app_user.isConfirmed',
     ];
 
-    const result = this.connection
+    const result = await this.connection
       .getRepository(AppUser)
       .createQueryBuilder('app_user')
       .select(USER_FIELDS)
       .where({ id: userId })
       .getOne();
 
-    console.log('result AUTHORIZED ', result);
+    if (result) {
+      const userToUpdate = result;
+      userToUpdate.isConfirmed = true;
 
-    return result;
+      const updatedUser = await this.connection
+        .getRepository(AppUser)
+        .save(userToUpdate);
+      console.log('----> updatedUser ', updatedUser);
+      return updatedUser;
+    }
+    // TODO What do I have to return in case of fail?
+    //console.log('---> result AUTHORIZED ', result);
   }
 
-  // TODO Change logic to separate auth and login processes
-
-  @Post('login')
+  @Post('register')
   async hashPassword(@Body() user: User): Promise<AppUser[]> {
     const userToSave = user;
     // TODO add validation for all params + Validate email and password on frontEnd
@@ -49,41 +57,43 @@ export class UserController {
     userToSave.name = this.userService.validateUserName(user.name);
     userToSave.email = this.userService.validateEmail(user.email);
     userToSave.password = this.userService.hashPassword(user.password);
-    //const result: User[] = await this.userService.saveNewUser(userToSave);
+    userToSave.isConfirmed = false;
 
     let result: User[];
     try {
       result = await this.userService.saveNewUser(userToSave);
     } catch {
       console.log('no result');
-      throw new LoginUserError('Duplicate value. A User with such email address already exists.');
+      throw new LoginUserError('Oops. Something is wrong. Please, try again.');
     }
-    console.log('result LOGIN', result);
+    console.log('---> result REGISTRED', result);
 
     return result;
   }
 
-  @Post('autorize')
-  async checkUser(@Body() user: User): Promise<AppUser[]> {
-    const userToSave = user;
-    // TODO add validation for all params + Validate email and password on frontEnd
-    userToSave.id = this.appService.getId();
-    userToSave.name = this.userService.validateUserName(user.name);
-    userToSave.email = this.userService.validateEmail(user.email);
-    userToSave.password = this.userService.hashPassword(user.password);
-    //const result: User[] = await this.userService.saveNewUser(userToSave);
+   @Post('autorize')
+   async autorizeUser(@Req() req,
+    @Body() user: User): Promise<AppUser[]> {
+      console.log('---> REQ HEADERS ', req.headers);
+      console.log('---> REQ BODY', req.body);
+  //   const userToSave = user;
+  //   // TODO add validation for all params + Validate email and password on frontEnd
+  //   userToSave.id = this.appService.getId();
+  //   userToSave.name = this.userService.validateUserName(user.name);
+  //   userToSave.email = this.userService.validateEmail(user.email);
+  //   userToSave.password = this.userService.hashPassword(user.password);
 
-    let result: User[];
-    try {
-      result = await this.userService.saveNewUser(userToSave);
-    } catch {
-      console.log('no result');
-      throw new LoginUserError('Duplicate value. A User with such email address already exists.');
-    }
-    console.log('result AUTORIZE', result);
+     let result: User[];
+  //   try {
+  //     result = await this.userService.saveNewUser(userToSave);
+  //   } catch {
+  //     console.log('no result');
+  //     throw new LoginUserError('Duplicate value. A User with such email address already exists.');
+  //   }
+  //   console.log('result AUTORIZE', result);
 
-    return result;
-  }
+     return result;
+   }
 
   async getUsers(): Promise<AppUser[]> {
     //console.log('Users ', await this.userService.getUsers());

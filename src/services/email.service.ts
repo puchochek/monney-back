@@ -22,15 +22,10 @@ export class EmailService {
   }
 
   public sendRegistrationMail(emailAddres: string, id: string): Promise<any> {
-    console.log('sendRegistrationMail');
+    console.log('---> sendRegistrationMail');
     const expiresIn = '2 hours';
     const token = this.jwtService.generateToken(id, expiresIn);
-    console.log('token ', token);
-    //const link = `${ConfigService.get().CLIENT_URL}/activate/${token}`;
     const link = `<a href="${process.env.CLIENT_URL}/activate/${token}">${process.env.CLIENT_URL}/activate/${token}</a>`;
-    console.log('link ', link);
-
-    //const templatePath = __dirname + '/email-templates/registration.pug';
 
     return this.server.sendMail({
       text: '',
@@ -40,6 +35,4 @@ export class EmailService {
       html: `Hello ${link}`,
     });
   }
-
-
 }

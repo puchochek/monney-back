@@ -16,7 +16,7 @@ export class JwtService {
   }
 
   decodeJwt(token: string): any {
-    console.log('token ', token);
+    console.log('----> token ', token);
     const JWT_SECRET = process.env.JWT_SECRET;
     let jwtDecoded: {};
     try {
@@ -25,7 +25,7 @@ export class JwtService {
       console.log(`Error verifying token: ${err.name}`);
       return null;
     }
-    console.log('jwtDecoded ', jwtDecoded);
+    console.log('----> jwtDecoded ', jwtDecoded);
     return jwtDecoded;
   }
 }

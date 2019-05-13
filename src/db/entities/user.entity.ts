@@ -15,4 +15,7 @@ export class AppUser {
   @Column({ nullable: true })
   password: string;
 
+  @Column({ nullable: true })
+  isConfirmed: boolean;
+
 }
