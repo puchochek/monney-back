@@ -74,8 +74,14 @@ export class UserController {
    @Post('autorize')
    async autorizeUser(@Req() req,
     @Body() user: User): Promise<AppUser[]> {
-      console.log('---> REQ HEADERS ', req.headers);
+      console.log('---> REQ HEADERS ', req.headers.authorization);
       console.log('---> REQ BODY', req.body);
+      const token = req.headers.authorization.split(' ')[1];
+      console.log('---> token ', token);
+      const userId = this.jwtService.decodeJwt(token).data;
+      console.log('---> userId ', userId);
+
+
   //   const userToSave = user;
   //   // TODO add validation for all params + Validate email and password on frontEnd
   //   userToSave.id = this.appService.getId();

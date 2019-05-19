@@ -1,21 +1,51 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  DefaultNamingStrategy,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { Category } from './category.entity';
+import { Expence } from './expence.entity';
 
 @Entity()
 export class AppUser {
 
   @PrimaryColumn()
-  id: string;
+  public id: string;
+
+  @OneToMany(type => Category, category => category.user)
+  public categories: Category[];
+
+  @OneToMany(type => Expence, expence => expence.user)
+  public expences: Expence[];
 
   @Column({ nullable: true })
-  name: string;
+  public name: string;
 
   @Column({ nullable: true })
-  email: string;
+  public email: string;
 
   @Column({ nullable: true })
-  password: string;
+  public password: string;
 
   @Column({ nullable: true })
-  isConfirmed: boolean;
+  public isConfirmed: boolean;
 
+  @Column({ nullable: true })
+  public avatar: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  public createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  public updatedAt: Date;
 }

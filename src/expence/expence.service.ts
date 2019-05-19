@@ -16,6 +16,7 @@ export class ExpenceService {
   }
 
   async saveNewExpence(newExpence: any): Promise<Expence[]> {
+    console.log('newExpence ', newExpence);
     return await this.expenceRepository.save(newExpence);
   }
 
