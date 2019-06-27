@@ -49,6 +49,32 @@ export class UserController {
     //console.log('---> result AUTHORIZED ', result);
   }
 
+
+
+  // THIS VERSION CRASHES BECAUSE USER/APPUSER
+
+  // @Post('register')
+  // async hashPassword(@Body() user: User): Promise<AppUser[]> {
+  //   const userToSave = user;
+  //   // TODO add validation for all params + Validate email and password on frontEnd
+  //   userToSave.id = this.appService.getId();
+  //   userToSave.name = this.userService.validateUserName(user.name);
+  //   userToSave.email = this.userService.validateEmail(user.email);
+  //   userToSave.password = this.userService.hashPassword(user.password);
+  //   userToSave.isConfirmed = false;
+
+  //   let result: User[];
+  //   try {
+  //     result = await this.userService.saveNewUser(userToSave);
+  //   } catch {
+  //     console.log('no result');
+  //     throw new LoginUserError('Oops. Something is wrong. Please, try again.');
+  //   }
+  //   console.log('---> result REGISTRED', result);
+
+  //   return result;
+  // }
+
   @Post('register')
   async hashPassword(@Body() user: User): Promise<AppUser[]> {
     const userToSave = user;
@@ -59,7 +85,7 @@ export class UserController {
     userToSave.password = this.userService.hashPassword(user.password);
     userToSave.isConfirmed = false;
 
-    let result: User[];
+    let result: AppUser[];
     try {
       result = await this.userService.saveNewUser(userToSave);
     } catch {
@@ -89,7 +115,7 @@ export class UserController {
   //   userToSave.email = this.userService.validateEmail(user.email);
   //   userToSave.password = this.userService.hashPassword(user.password);
 
-     let result: User[];
+     let result: AppUser[];
   //   try {
   //     result = await this.userService.saveNewUser(userToSave);
   //   } catch {
