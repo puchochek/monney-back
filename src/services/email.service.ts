@@ -16,15 +16,14 @@ export class EmailService {
 			service: 'SendGrid',
 			auth: {
 				user: process.env.EMAIL_USER,
-				pass: process.env.EMAIL_PASS,
+				pass: process.env.EMAIL_PASS
 			},
 		});
 	}
 
 	public sendRegistrationMail(emailAddres: string, id: string): Promise<any> {
-		console.log('---> sendRegistrationMail');
 		const expiresIn = '2 hours';
-		const token = this.jwtService.generateToken(id, expiresIn);		
+		const token = this.jwtService.generateToken(id, expiresIn);
 		const link = `<a href="${process.env.CLIENT_URL}/activate/${token}">${process.env.CLIENT_URL}/activate/${token}</a>`;
 
 		return this.server.sendMail({
