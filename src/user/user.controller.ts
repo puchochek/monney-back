@@ -127,11 +127,14 @@ export class UserController {
 		return result;
 	}
 
-	@Get(':user')
-	async getUserById(@Body() id: string): Promise<AppUser> {
-		console.log('---> getUserById ', id);
-		return await this.userService.getUserById(id);
+	@Get(':id')
+	getUserById(@Param('id') id: string): Promise<AppUser> {
+		console.log('---> id ', id );
+		console.log('---> res ', this.userService.getUserById(id));
+		return this.userService.getUserById(id);
+		//return `This action returns a #${id} cat`;
 	}
+
 	// async getUsers(): Promise<AppUser[]> {
 	//   //console.log('Users ', await this.userService.getUsers());
 	//   return await this.userService.getUsers();

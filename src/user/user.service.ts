@@ -16,7 +16,6 @@ export class UserService {
 
 	hashPassword(password: string): string {
 		const hashedPassword = bcrypt.hashSync(password, saltRounds);
-		console.log('----> hashedPass ', hashedPassword);
 
 		return hashedPassword ? hashedPassword : 'Error';
 	}
@@ -32,9 +31,7 @@ export class UserService {
 	}
 
 	async saveNewUser(user: any): Promise<AppUser[]> {
-		console.log('---> user to create ', user);
 		const createdUser = await this.userRepository.save(user);
-		console.log('----> createdUser ', createdUser);
 		let emailToSendAuth: string;
 		let userId: string;
 
@@ -61,8 +58,7 @@ export class UserService {
 		//   });
 	}
 
-	// async getUserById(id: string): Promise<AppUser[]> {
-		async getUserById(userId: string): Promise<AppUser> {
+	async getUserById(userId: string): Promise<AppUser> {
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -86,18 +82,17 @@ export class UserService {
 			// 'openedGameWatcher.number',
 			// 'openedGameWatcher.id',
 		];
-		// return await this.userRepository.findByIds(ids: any[]);
 		return await this.userRepository
-      //.getRepository(User)
-      .createQueryBuilder('app_user')
-      .select(USER_FIELDS)
-    //   .leftJoin(...USER_JOIN_OPENED_GAME)
-    //   .leftJoin(...USER_JOIN_CURRENT_GAMES)
-    //   .leftJoin(...USER_JOIN_CURRENT_WATCH)
-    //   .leftJoin(...USER_JOIN_INVITES_INVITER)
-    //   .leftJoin(...USER_JOIN_INVITES_INVITEE)
-      .where({ id: userId })
-      .getOne();
+			//.getRepository(User)
+			.createQueryBuilder('app_user')
+			.select(USER_FIELDS)
+			//   .leftJoin(...USER_JOIN_OPENED_GAME)
+			//   .leftJoin(...USER_JOIN_CURRENT_GAMES)
+			//   .leftJoin(...USER_JOIN_CURRENT_WATCH)
+			//   .leftJoin(...USER_JOIN_INVITES_INVITER)
+			//   .leftJoin(...USER_JOIN_INVITES_INVITEE)
+			.where({ id: userId })
+			.getOne();
 	}
 
 	async getUsers(): Promise<AppUser[]> {
