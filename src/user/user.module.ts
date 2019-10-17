@@ -9,13 +9,13 @@ import { DbModule } from 'src/db/db.module';
 import { ServicesModule } from 'src/services/services.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Expence]),
-    TypeOrmModule.forFeature([AppUser]),
-    DbModule,
-    ServicesModule,
-  ],
-  controllers: [UserController],
-  providers: [UserService, AppService],
+	imports: [
+		TypeOrmModule.forFeature([Expence]),
+		TypeOrmModule.forFeature([AppUser]),
+		DbModule,
+		ServicesModule,
+	],
+	controllers: [UserController],
+	providers: [UserService, AppService],
 })
 export class UserModule { }

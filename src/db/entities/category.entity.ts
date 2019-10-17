@@ -19,7 +19,7 @@ import {
 @Entity()
 export class Category {
 
-    @PrimaryColumn()
+    @PrimaryColumn('uuid')
     public id: string;
 
     @ManyToOne(type => AppUser, user => user.categories)
