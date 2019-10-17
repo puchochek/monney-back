@@ -68,29 +68,19 @@ export class UserService {
 			'app_user.avatar',
 			'app_user.createdAt',
 			'app_user.updatedAt',
-			// 'user.lastName',
-			// 'user.createdAt',
-			// 'user.previousVisitAt',
-			// 'user.updatedAt',
-			// 'user.isConfirmed',
-			// 'user.gamesPlayed',
-			// 'user.gamesWon',
-			// 'openedGame.number',
-			// 'openedGame.id',
-			// 'currentGames.number',
-			// 'currentGames.id',
-			// 'openedGameWatcher.number',
-			// 'openedGameWatcher.id',
 		];
+		//const USER_JOIN_CATEGORY: [string, string] = ['app_user.categories', 'category'];
+		// return await this.userRepository
+		// 	//.getRepository(User)
+		// 	.createQueryBuilder('app_user')
+		// 	.select(USER_FIELDS)
+		// 	.leftJoin(...USER_JOIN_CATEGORY)
+		// 	.where({ id: userId })
+		// 	.getOne();
 		return await this.userRepository
-			//.getRepository(User)
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
-			//   .leftJoin(...USER_JOIN_OPENED_GAME)
-			//   .leftJoin(...USER_JOIN_CURRENT_GAMES)
-			//   .leftJoin(...USER_JOIN_CURRENT_WATCH)
-			//   .leftJoin(...USER_JOIN_INVITES_INVITER)
-			//   .leftJoin(...USER_JOIN_INVITES_INVITEE)
+			.leftJoinAndSelect("app_user.categories", "category")
 			.where({ id: userId })
 			.getOne();
 	}

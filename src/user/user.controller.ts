@@ -26,7 +26,10 @@ export class UserController {
 			'app_user.email',
 			'app_user.password',
 			'app_user.isConfirmed',
+			// 'category.name',
+			// 'category.description',
 		];
+		//const USER_JOIN_CATEGORY: [string, string] = ['app_user.category', 'category'];
 
 		const result = await this.connection
 			.getRepository(AppUser)
