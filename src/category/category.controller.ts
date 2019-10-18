@@ -17,7 +17,7 @@ export class CategoryController {
         const categoryToSave = new Category;
         categoryToSave.id = newCategory.id ?
             newCategory.id
-            :this.appService.getId();
+            : this.appService.getId();
         categoryToSave.name = newCategory.name;
         categoryToSave.description = newCategory.description;
         categoryToSave.user = newCategory.user;
@@ -29,6 +29,11 @@ export class CategoryController {
         }
         console.log('---> result ', result);
         return result;
+    }
+
+    @Get(':userId')
+    getCategoriesByUserId(@Param('userId') userId): Promise<Category[]> {
+        return this.categoryService.getCategoriesByUserId(userId);
     }
 
     //   @Get()
