@@ -15,12 +15,13 @@ export class CategoryController {
     async createNewCategory(@Body() newCategory: ExpenceCategory): Promise<Category> {
         console.log('---> newCategory ', newCategory);
         const categoryToSave = new Category;
-        //categoryToSave.type = this.appService.parseDate(newExpence.dateToParse);
-        categoryToSave.id = this.appService.getId();
-        // categoryToSave.type = this.appService.parseDate(newExpence.dateToParse);
-        categoryToSave.type = newCategory.name;
+        categoryToSave.id = newCategory.id ?
+            newCategory.id
+            :this.appService.getId();
+        categoryToSave.name = newCategory.name;
         categoryToSave.description = newCategory.description;
         categoryToSave.user = newCategory.user;
+        categoryToSave.isActive = newCategory.isActive;
         console.log('---> categoryToSave ', categoryToSave);
         const result: Category = await this.categoryService.saveNewCategory(categoryToSave);
         if (!result) {

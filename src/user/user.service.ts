@@ -80,11 +80,11 @@ export class UserService {
 		return await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
-			.leftJoinAndSelect("app_user.categories", "category")
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true" )
 			.where({ id: userId })
 			.getOne();
 	}
-
+	//'creator.id = user.id'
 	async getUsers(): Promise<AppUser[]> {
 		return await this.userRepository.find();
 	}

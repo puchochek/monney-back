@@ -5,4 +5,5 @@ export class ExpenceCategory {
     description: string;
     name: string;
     user: string;
+    isActive: boolean;
 }

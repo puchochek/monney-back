@@ -19,7 +19,7 @@ export class CategoryService {
     // }
 
     async saveNewCategory(newCategory: Category): Promise<Category> {
-        console.log('newCategory ', newCategory);
+       // console.log('newCategory ', newCategory);
         return await this.categoryRepository.save(newCategory);
     }
 

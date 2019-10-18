@@ -30,10 +30,13 @@ export class Category {
     public expences: Expence[];
 
     @Column({ nullable: true })
-    public type: string;
+    public name: string;
 
     @Column({ nullable: true })
     public description: string;
+
+    @Column({ nullable: true })
+    public isActive: boolean;
 
     @CreateDateColumn({ name: 'created_at' })
     public createdAt: Date;
