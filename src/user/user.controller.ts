@@ -130,12 +130,22 @@ export class UserController {
 		return result;
 	}
 
-	@Get(':id')
+	@Get('user-by-id/:id')
 	getUserById(@Param('id') id: string): Promise<AppUser> {
+		console.log('---> getUserById ', id );
 		// console.log('---> id ', id );
 		// console.log('---> res ', this.userService.getUserById(id));
 		return this.userService.getUserById(id);
 	}
+
+	@Get('user-token/:userId')
+	getActivatedUserToken(@Param('userId') userId : string): string {
+		const expiresIn = '3 days';
+		const token = this.jwtService.generateToken(userId, expiresIn);
+
+		return token;
+	}
+
 
 	// async getUsers(): Promise<AppUser[]> {
 	//   //console.log('Users ', await this.userService.getUsers());
