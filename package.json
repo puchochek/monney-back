@@ -24,7 +24,7 @@
     "@nestjs/core": "^5.4.0",
     "@nestjs/typeorm": "^5.2.2",
     "basic-auth": "^2.0.1",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^3.0.0",
     "dotenv": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
     "nodemailer": "^6.3.1",

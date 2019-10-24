@@ -23,6 +23,7 @@ export class UserController {
 	@Post('token')
 	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
 		const userId = this.jwtService.decodeJwt(token).data;
+		console.log('userId ', userId);
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -40,7 +41,7 @@ export class UserController {
 			.select(USER_FIELDS)
 			.where({ id: userId })
 			.getOne();
-
+			console.log('result ', result);
 		if (result) {
 			const userToUpdate = result;
 			userToUpdate.isConfirmed = true;

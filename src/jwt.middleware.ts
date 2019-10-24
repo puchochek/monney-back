@@ -16,16 +16,17 @@ export class JwtMiddleware implements NestMiddleware {
             const expiresIn = '7 days';
             const newToken = this.jwtService.generateToken(userId, expiresIn);
 
-            // res.set('Authorization', `Bearer ${newToken}`);
+            res.set('Access-Control-Expose-Headers', 'Authorization');
+            res.set('Authorization', `Bearer ${newToken}`);
+
             // res.header('Authorization', `Bearer ${newToken}`);
-            res.setHeader('Authorization', `Bearer ${newToken}`);
-            req.headers.authorization = `Bearer ${newToken}`;
-            
+            // res.setHeader('Authorization', `Bearer ${newToken}`);
+            // req.headers.authorization = `Bearer ${newToken}`;
+
             //res.headers.authorization = `Bearer ${newToken}`;
 
-            console.log('---> req.headers.authorization ', req.headers.authorization);
-
-            console.log('---> res.headers ', res.headers);
+            // console.log('---> req.headers.authorization ', req.headers.authorization);
+            console.log(123123123, '---> res.headers ', res.header());
 
             next();
         };
