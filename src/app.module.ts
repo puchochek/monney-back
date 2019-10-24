@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserController } from './user/user.controller';
 import { CategoryController } from './category/category.controller';
@@ -15,6 +15,9 @@ import { ServicesModule } from './services/services.module';
 import { DbModule } from './db/db.module';
 import { CategoryModule } from './category/category.module';
 
+import { JwtMiddleware } from './jwt.middleware';
+
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([Expence]),
@@ -26,8 +29,16 @@ import { CategoryModule } from './category/category.module';
     TypeOrmModule,
     DbModule,
     CategoryModule,
+    // JwtMiddleware
   ],
   controllers: [AppController, UserController, CategoryController],
   providers: [AppService, UserService,CategoryService],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware)
+      .forRoutes({
+        path: '*', method: RequestMethod.ALL
+      });
+  }
+}

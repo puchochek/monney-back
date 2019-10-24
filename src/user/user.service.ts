@@ -42,20 +42,6 @@ export class UserService {
 		const emailSendResult = await this.emailService.sendRegistrationMail(emailToSendAuth, userId);
 
 		return createdUser;
-
-
-
-		// return await this.userRepository.save(user);
-
-		// this.emailService.sendRegistrationMail('puchochek@gmail.com')
-		//   .then(emailSendResult => {
-		//     console.log('emailSendResult', emailSendResult);
-
-		//     return this.userRepository.save(user);
-		//   })
-		//   .then(user => {
-		//     return user;
-		//   });
 	}
 
 	async getUserById(userId: string): Promise<AppUser> {
@@ -69,22 +55,14 @@ export class UserService {
 			'app_user.createdAt',
 			'app_user.updatedAt',
 		];
-		//const USER_JOIN_CATEGORY: [string, string] = ['app_user.categories', 'category'];
-		// return await this.userRepository
-		// 	//.getRepository(User)
-		// 	.createQueryBuilder('app_user')
-		// 	.select(USER_FIELDS)
-		// 	.leftJoin(...USER_JOIN_CATEGORY)
-		// 	.where({ id: userId })
-		// 	.getOne();
 		return await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
-			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true" )
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
 			.where({ id: userId })
 			.getOne();
 	}
-	//'creator.id = user.id'
+
 	async getUsers(): Promise<AppUser[]> {
 		return await this.userRepository.find();
 	}

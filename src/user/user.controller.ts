@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, Res, UseGuards, Header } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { AppUser } from '../db/entities/user.entity';
@@ -6,6 +6,9 @@ import { User } from './user.dto';
 import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { Connection } from 'typeorm';
+import { AuthGuard } from '../auth.guard';
+// import { JwtMiddleware } from '../jwt.middleware';
+
 
 @Controller('user')
 export class UserController {
@@ -131,16 +134,26 @@ export class UserController {
 	}
 
 	@Get('user-by-id/:id')
+	@UseGuards(AuthGuard)
+	//@Header('Authorization',  `Bearer ${token}`)
 	getUserById(@Param('id') id: string): Promise<AppUser> {
 		console.log('---> getUserById ', id );
-		// console.log('---> id ', id );
-		// console.log('---> res ', this.userService.getUserById(id));
 		return this.userService.getUserById(id);
 	}
 
+	// @Get('user-by-id/:id')
+	// @UseGuards(AuthGuard)
+    // getUserById(@Param('id') id: string, @Res() res) {
+	// 	const out = this.userService.getUserById(id);
+	// 	const expiresIn = '7 days';
+	// 	const token = this.jwtService.generateToken(id, expiresIn);
+	// 	res.setHeader('Authorization', `Bearer ${token}`);
+    //     return res.send(out);
+    // }
+
 	@Get('user-token/:userId')
 	getActivatedUserToken(@Param('userId') userId : string): string {
-		const expiresIn = '3 days';
+		const expiresIn = '7 days';
 		const token = this.jwtService.generateToken(userId, expiresIn);
 
 		return token;
