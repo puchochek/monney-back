@@ -25,7 +25,6 @@ export class AuthGuard implements CanActivate {
         //console.log('---> validateRequest ', request);
         const tokenHttp =
             request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1];
-            console.log('---> request.headers.authorization ', request.headers.authorization );
         console.log('---> validateRequest tokenHttp ', tokenHttp);
         if (!tokenHttp) {
             console.log('---> no token return');
@@ -41,7 +40,6 @@ export class AuthGuard implements CanActivate {
         }
 
         this.userService.getUserById(userId).then(user => {
-            console.log('---> user ', user);
             if (!user) {
                 console.log('---> no user return');
                 return false;

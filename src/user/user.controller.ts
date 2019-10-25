@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, Res, UseGuards, Header } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { AppUser } from '../db/entities/user.entity';
@@ -7,8 +7,6 @@ import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { Connection } from 'typeorm';
 import { AuthGuard } from '../auth.guard';
-// import { JwtMiddleware } from '../jwt.middleware';
-
 
 @Controller('user')
 export class UserController {
@@ -30,10 +28,7 @@ export class UserController {
 			'app_user.email',
 			'app_user.password',
 			'app_user.isConfirmed',
-			// 'category.name',
-			// 'category.description',
 		];
-		//const USER_JOIN_CATEGORY: [string, string] = ['app_user.category', 'category'];
 
 		const result = await this.connection
 			.getRepository(AppUser)
@@ -136,29 +131,18 @@ export class UserController {
 
 	@Get('user-by-id/:id')
 	@UseGuards(AuthGuard)
-	//@Header('Authorization',  `Bearer ${token}`)
 	getUserById(@Param('id') id: string): Promise<AppUser> {
 		console.log('---> getUserById ', id );
 		return this.userService.getUserById(id);
 	}
 
-	// @Get('user-by-id/:id')
-	// @UseGuards(AuthGuard)
-    // getUserById(@Param('id') id: string, @Res() res) {
-	// 	const out = this.userService.getUserById(id);
+	// @Get('user-token/:userId')
+	// getActivatedUserToken(@Param('userId') userId : string): string {
 	// 	const expiresIn = '7 days';
-	// 	const token = this.jwtService.generateToken(id, expiresIn);
-	// 	res.setHeader('Authorization', `Bearer ${token}`);
-    //     return res.send(out);
-    // }
+	// 	const token = this.jwtService.generateToken(userId, expiresIn);
 
-	@Get('user-token/:userId')
-	getActivatedUserToken(@Param('userId') userId : string): string {
-		const expiresIn = '7 days';
-		const token = this.jwtService.generateToken(userId, expiresIn);
-
-		return token;
-	}
+	// 	return token;
+	// }
 
 
 	// async getUsers(): Promise<AppUser[]> {

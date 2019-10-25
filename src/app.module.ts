@@ -32,11 +32,16 @@ import { JwtMiddleware } from './jwt.middleware';
     // JwtMiddleware
   ],
   controllers: [AppController, UserController, CategoryController],
-  providers: [AppService, UserService,CategoryService],
+  providers: [AppService, UserService, CategoryService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JwtMiddleware)
+      // .exclude(
+        // { path: 'user/autorize', method: RequestMethod.ALL },
+        // { path: 'user/token', method: RequestMethod.ALL },
+        // { path: 'user/register', method: RequestMethod.ALL },
+      // )
       .forRoutes({
         path: '*', method: RequestMethod.ALL
       });
