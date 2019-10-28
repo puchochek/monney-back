@@ -1,10 +1,18 @@
 import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
+// import { AppUser } from './db/entities/user.entity';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
+import { UserService } from './user/user.service';
 
 import { JwtService } from './services/jwt.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-    constructor(private jwtService: JwtService) { }
+    constructor(
+        // @InjectRepository(AppUser) private readonly userRepository: Repository<AppUser>,
+        private userService: UserService,
+        private jwtService: JwtService
+    ) { }
 
     resolve(...args: any[]): MiddlewareFunction {
         return (req, res, next) => {
@@ -12,20 +20,27 @@ export class JwtMiddleware implements NestMiddleware {
             let userId;
             let newToken;
             const expiresIn = '7 days';
+
             console.log('---> req.baseUrl ', req.baseUrl);
+
             if (req.baseUrl === '/user/token') {
-                console.log('---> req.body ', req.baseUrl);
-                console.log('---> req.body ', req.body);
                 userId = this.jwtService.verifyJwt(req.body.token).data;
                 newToken = this.jwtService.generateToken(userId, expiresIn);
-console.log('---> newToken ', newToken );
+
                 res.set('Access-Control-Expose-Headers', 'Authorization');
                 res.set('Authorization', `Bearer ${newToken}`);
                 return next();
-                // next();
             }
 
-            console.log('---> req.headers.authorization ', !req.headers.authorization, ' ', req.headers.authorization);
+            if (req.baseUrl.includes(`/user/user-token/`)) {
+                const urlId = req.baseUrl.substring(17);
+                newToken = this.jwtService.generateToken(urlId, expiresIn);
+
+                res.set('Access-Control-Expose-Headers', 'Authorization');
+                res.set('Authorization', `Bearer ${newToken}`);
+
+                return next();
+            }
 
             if (!req.headers.authorization) {
                 console.log('---> no req.headers.authorization');

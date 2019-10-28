@@ -16,7 +16,7 @@ export class JwtService {
 	}
 
 	decodeJwt(token: string): any {
-		console.log('---> decodeJwt ', token);
+		//console.log('---> decodeJwt ', token);
 		const JWT_SECRET = process.env.JWT_SECRET;
 		let jwtDecoded: {};
 		try {
@@ -28,7 +28,7 @@ export class JwtService {
 		console.log('----> jwtDecoded ', jwtDecoded);
 		return jwtDecoded;
 	}
-
+//TODO the same as decode
 	verifyJwt(token: string): any {
 		console.log('---> verifyJwt ', token);
 		const JWT_SECRET = process.env.JWT_SECRET;

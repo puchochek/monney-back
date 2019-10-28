@@ -49,8 +49,6 @@ export class AuthGuard implements CanActivate {
         const isTokenVerified = this.jwtService.verifyJwt(tokenHttp);
         console.log('---> validateRequest isTokenVerified ', isTokenVerified);
 
-
         return true;
-
     }
 }

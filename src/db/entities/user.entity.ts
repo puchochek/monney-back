@@ -30,7 +30,7 @@ export class AppUser {
 
   @Column({ nullable: true })
   public name: string;
-
+  //TODO make the field unique
   @Column({ nullable: true })
   public email: string;
 

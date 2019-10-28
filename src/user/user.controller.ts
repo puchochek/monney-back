@@ -36,7 +36,7 @@ export class UserController {
 			.select(USER_FIELDS)
 			.where({ id: userId })
 			.getOne();
-			console.log('result ', result);
+		console.log('result ', result);
 		if (result) {
 			const userToUpdate = result;
 			userToUpdate.isConfirmed = true;
@@ -50,32 +50,6 @@ export class UserController {
 		// TODO What do I have to return in case of fail?
 		//console.log('---> result AUTHORIZED ', result);
 	}
-
-
-
-	// THIS VERSION CRASHES BECAUSE USER/APPUSER
-
-	// @Post('register')
-	// async hashPassword(@Body() user: User): Promise<AppUser[]> {
-	//   const userToSave = user;
-	//   // TODO add validation for all params + Validate email and password on frontEnd
-	//   userToSave.id = this.appService.getId();
-	//   userToSave.name = this.userService.validateUserName(user.name);
-	//   userToSave.email = this.userService.validateEmail(user.email);
-	//   userToSave.password = this.userService.hashPassword(user.password);
-	//   userToSave.isConfirmed = false;
-
-	//   let result: User[];
-	//   try {
-	//     result = await this.userService.saveNewUser(userToSave);
-	//   } catch {
-	//     console.log('no result');
-	//     throw new LoginUserError('Oops. Something is wrong. Please, try again.');
-	//   }
-	//   console.log('---> result REGISTRED', result);
-
-	//   return result;
-	// }
 
 	@Post('register')
 	async hashPassword(@Body() user: User): Promise<AppUser[]> {
@@ -101,53 +75,20 @@ export class UserController {
 
 	@Post('autorize')
 	async autorizeUser(@Req() req,
-		@Body() user: User): Promise<AppUser[]> {
-		console.log('---> REQ HEADERS ', req.headers.authorization);
-		console.log('---> REQ BODY', req.body);
-		const token = req.headers.authorization.split(' ')[1];
-		console.log('---> token ', token);
-		const userId = this.jwtService.decodeJwt(token).data;
-		console.log('---> userId ', userId);
-
-
-		//   const userToSave = user;
-		//   // TODO add validation for all params + Validate email and password on frontEnd
-		//   userToSave.id = this.appService.getId();
-		//   userToSave.name = this.userService.validateUserName(user.name);
-		//   userToSave.email = this.userService.validateEmail(user.email);
-		//   userToSave.password = this.userService.hashPassword(user.password);
-
-		let result: AppUser[];
-		//   try {
-		//     result = await this.userService.saveNewUser(userToSave);
-		//   } catch {
-		//     console.log('no result');
-		//     throw new LoginUserError('Duplicate value. A User with such email address already exists.');
-		//   }
-		//   console.log('result AUTORIZE', result);
-
-		return result;
+		@Body() user: User): Promise<AppUser> {
+		return this.userService.getUserByPassword(user);
 	}
 
 	@Get('user-by-id/:id')
 	@UseGuards(AuthGuard)
 	getUserById(@Param('id') id: string): Promise<AppUser> {
-		console.log('---> getUserById ', id );
+		console.log('---> getUserById ', id);
 		return this.userService.getUserById(id);
 	}
-
-	// @Get('user-token/:userId')
-	// getActivatedUserToken(@Param('userId') userId : string): string {
-	// 	const expiresIn = '7 days';
-	// 	const token = this.jwtService.generateToken(userId, expiresIn);
-
-	// 	return token;
-	// }
-
-
-	// async getUsers(): Promise<AppUser[]> {
-	//   //console.log('Users ', await this.userService.getUsers());
-	//   return await this.userService.getUsers();
-	// }
+	/* Returns nothing but set appropriate header*/
+	@Get('user-token/:userId')
+	getActivatedUserToken(@Param('userId') userId: string) {
+		console.log('---> user-token userId ', userId);
+	}
 
 }

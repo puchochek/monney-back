@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from '../services/email.service';
+import { User } from './user.dto';
 
 const saltRounds = 10;
 
@@ -18,6 +19,10 @@ export class UserService {
 		const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
 		return hashedPassword ? hashedPassword : 'Error';
+	}
+
+	comparePasswords(passwordToCompare: string, selectedUserPassword: string): boolean {
+		return bcrypt.compareSync(passwordToCompare, selectedUserPassword);
 	}
 
 	validateUserName(name: string): string {
@@ -63,8 +68,33 @@ export class UserService {
 			.getOne();
 	}
 
-	async getUsers(): Promise<AppUser[]> {
-		return await this.userRepository.find();
+	async getUserByPassword(user: User): Promise<AppUser> {
+		const USER_FIELDS = [
+			'app_user.id',
+			'app_user.name',
+			'app_user.email',
+			'app_user.password',
+			'app_user.isConfirmed',
+			'app_user.avatar',
+			'app_user.createdAt',
+			'app_user.updatedAt',
+		];
+		const userByEmail = await this.userRepository
+			.createQueryBuilder('app_user')
+			.select(USER_FIELDS)
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+			.where({ email: user.email })
+			.getOne();
+
+		if (this.comparePasswords(user.password, userByEmail.password)) {
+			return userByEmail;
+		}
+
+		return null;
 	}
+
+	// async getUsers(): Promise<AppUser[]> {
+	// 	return await this.userRepository.find();
+	// }
 
 }
