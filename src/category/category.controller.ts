@@ -30,6 +30,16 @@ export class CategoryController {
         return result;
     }
 
+    @Post('reorder')
+    async reorderCategories(@Body() categoryData: any): Promise<Category[]> {
+        const result: Category[] = await this.categoryService.reorderCategories(categoryData.userId, categoryData.draggedItemIndex, categoryData.targetItemIndex);
+        if (!result) {
+            console.log('Error');
+        }
+
+        return result;
+    }
+
     @Get(':userId')
     getCategoriesByUserId(@Param('userId') userId): Promise<Category[]> {
         return this.categoryService.getCategoriesByUserId(userId);

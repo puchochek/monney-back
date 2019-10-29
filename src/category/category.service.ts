@@ -88,6 +88,27 @@ export class CategoryService {
         this.categoryRepository.save(categoriesWithUpdatedIndex);
     }
 
+    async reorderCategories(userId: string, draggedItemIndex: number, targetItemIndex: number): Promise<Category[]> {
+        const userCategories = await this.getCategoriesByUserId(userId);
+        const categoriesToUpdate = userCategories.reduce((resultArray, currentCategory) => {
+            if (currentCategory.categoryIndex === draggedItemIndex) {
+                const categoryWithNewIndex = currentCategory;
+                categoryWithNewIndex.categoryIndex = targetItemIndex;
+                resultArray.push(categoryWithNewIndex);
+            } else if (currentCategory.categoryIndex === targetItemIndex) {
+                const categoryWithNewIndex = currentCategory;
+                categoryWithNewIndex.categoryIndex = draggedItemIndex;
+                resultArray.push(categoryWithNewIndex);
+            } else {
+                resultArray.push(currentCategory);
+            }
+            return resultArray;
+        }, []);
+        const updatedCategories = await this.categoryRepository.save(categoriesToUpdate);
+
+        return updatedCategories;
+    }
+
     //   async getExpenceByCategory(category: string) {
     //     const expence = await getRepository(Category)
     //       .createQueryBuilder('Expence')
