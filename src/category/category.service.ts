@@ -5,6 +5,7 @@ import { ExpenceCategory } from './category.dto';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { runInThisContext } from 'vm';
 
 
 @Injectable()
@@ -18,27 +19,73 @@ export class CategoryService {
     //     return await this.expenceRepository.find();
     // }
 
-    async saveNewCategory(newCategory: Category): Promise<Category> {
-        // console.log('newCategory ', newCategory);
-        return await this.categoryRepository.save(newCategory);
+    async upsertCategory(newCategory: Category): Promise<Category> {
+        console.log('---> categoryToUpsert ', newCategory);
+        const CATEGORY_FIELDS = [
+            'category.user',
+            'category.categoryIndex',
+            'category.isActive'
+        ];
+        let categoriesBeforeUpsert: Category[] = [];
+        const lastCategory = await this.categoryRepository
+            .createQueryBuilder('category')
+            .select(CATEGORY_FIELDS)
+            .where("category.user = :userId AND category.isActive = true", { userId: newCategory.user })
+            .orderBy("category.categoryIndex", "DESC")
+            .getOne();
+
+        if (newCategory.isActive) {
+            newCategory.categoryIndex = lastCategory ?
+                lastCategory.categoryIndex + 1
+                : 0;
+        } else {
+            categoriesBeforeUpsert = await this.getCategoriesByUserId(newCategory.user);
+        }
+
+        const upsertedCategory = await this.categoryRepository.save(newCategory);
+
+        if (upsertedCategory && !upsertedCategory.isActive) {
+            this.updateCategoriesOrder(categoriesBeforeUpsert, newCategory);
+        }
+
+        return upsertedCategory;
     }
 
     async getCategoriesByUserId(userId: string): Promise<Category[]> {
         const CATEGORY_FIELDS = [
-			'category.id',
-			'category.name',
-			'category.user',
-			'category.description',
-			'category.isActive',
-			'category.createdAt',
-			'category.updatedAt',
-		];
+            'category.id',
+            'category.name',
+            'category.user',
+            'category.description',
+            'category.categoryIndex',
+            'category.isActive',
+            'category.createdAt',
+            'category.updatedAt',
+        ];
         const userCategories = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
             .where("category.user = :userId AND category.isActive = true", { userId: userId })
             .getMany();
+
         return userCategories;
+    }
+
+    updateCategoriesOrder(userCategories: Category[], deletedCategory: Category) {
+        const deletedCategoryIndex = userCategories.find(category => category.id === deletedCategory.id).categoryIndex;
+        const categoriesWithUpdatedIndex = userCategories.reduce((resultArray, currentCategory) => {
+            if (currentCategory.categoryIndex < deletedCategoryIndex) {
+                resultArray.push(currentCategory);
+            }
+            if (currentCategory.categoryIndex > deletedCategoryIndex) {
+                const categoryWithUpdatedIndex = currentCategory;
+                categoryWithUpdatedIndex.categoryIndex = currentCategory.categoryIndex - 1;
+                resultArray.push(categoryWithUpdatedIndex);
+            }
+            return resultArray;
+        }, []);
+
+        this.categoryRepository.save(categoriesWithUpdatedIndex);
     }
 
     //   async getExpenceByCategory(category: string) {

@@ -1,7 +1,7 @@
 export class ExpenceCategory {
     id: string;
     // date: Date;
-    // dateToParse: string;
+    categoryIndex: number;
     description: string;
     name: string;
     user: string;

@@ -11,6 +11,8 @@ import {
     PrimaryColumn,
     Unique,
     UpdateDateColumn,
+    Generated,
+    PrimaryGeneratedColumn
   } from 'typeorm';
 
   import { Expence } from './expence.entity';
@@ -37,6 +39,9 @@ export class Category {
 
     @Column({ nullable: true })
     public isActive: boolean;
+
+    @Column({ nullable: true })
+    public categoryIndex: number;
 
     @CreateDateColumn({ name: 'created_at' })
     public createdAt: Date;

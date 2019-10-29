@@ -11,9 +11,8 @@ export class CategoryController {
         private categoryService: CategoryService,
     ) { }
 
-    @Post()
-    async createNewCategory(@Body() newCategory: ExpenceCategory): Promise<Category> {
-        console.log('---> newCategory ', newCategory);
+    @Post('upsert')
+    async upsertCategory(@Body() newCategory: ExpenceCategory): Promise<Category> {
         const categoryToSave = new Category;
         categoryToSave.id = newCategory.id ?
             newCategory.id
@@ -22,12 +21,12 @@ export class CategoryController {
         categoryToSave.description = newCategory.description;
         categoryToSave.user = newCategory.user;
         categoryToSave.isActive = newCategory.isActive;
-        console.log('---> categoryToSave ', categoryToSave);
-        const result: Category = await this.categoryService.saveNewCategory(categoryToSave);
+
+        const result: Category = await this.categoryService.upsertCategory(categoryToSave);
         if (!result) {
             console.log('Error');
         }
-        console.log('---> result ', result);
+
         return result;
     }
 
