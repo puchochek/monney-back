@@ -5,6 +5,7 @@ import { ExpenceCategory } from './category.dto';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import {Not} from "typeorm";
 import { runInThisContext } from 'vm';
 
 
@@ -19,18 +20,19 @@ export class CategoryService {
     //     return await this.expenceRepository.find();
     // }
 
-    async upsertCategory(newCategory: Category): Promise<Category> {
+    async upsertExpenseCategory(newCategory: Category): Promise<Category> {
         console.log('---> categoryToUpsert ', newCategory);
         const CATEGORY_FIELDS = [
             'category.user',
             'category.categoryIndex',
-            'category.isActive'
+            'category.isActive',
+            'category.isIncome',
         ];
         let categoriesBeforeUpsert: Category[] = [];
         const lastCategory = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
-            .where("category.user = :userId AND category.isActive = true", { userId: newCategory.user })
+            .where("category.user = :userId AND category.isActive = true AND category.isIncome = false", { userId: newCategory.user })
             .orderBy("category.categoryIndex", "DESC")
             .getOne();
 
@@ -39,7 +41,7 @@ export class CategoryService {
                 lastCategory.categoryIndex + 1
                 : 0;
         } else {
-            categoriesBeforeUpsert = await this.getCategoriesByUserId(newCategory.user);
+            categoriesBeforeUpsert = await this.getExpenseCategoriesByUserId(newCategory.user);
         }
 
         const upsertedCategory = await this.categoryRepository.save(newCategory);
@@ -51,13 +53,14 @@ export class CategoryService {
         return upsertedCategory;
     }
 
-    async getCategoriesByUserId(userId: string): Promise<Category[]> {
+    async getExpenseCategoriesByUserId(userId: string): Promise<Category[]> {
         const CATEGORY_FIELDS = [
             'category.id',
             'category.name',
             'category.user',
             'category.description',
             'category.categoryIndex',
+            'category.isIncome',
             'category.isActive',
             'category.createdAt',
             'category.updatedAt',
@@ -65,7 +68,7 @@ export class CategoryService {
         const userCategories = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
-            .where("category.user = :userId AND category.isActive = true", { userId: userId })
+            .where("category.user = :userId AND category.isActive = true AND category.isIncome = false", { userId: userId })
             .getMany();
 
         return userCategories;
@@ -89,7 +92,7 @@ export class CategoryService {
     }
 
     async reorderCategories(userId: string, draggedItemIndex: number, targetItemIndex: number): Promise<Category[]> {
-        const userCategories = await this.getCategoriesByUserId(userId);
+        const userCategories = await this.getExpenseCategoriesByUserId(userId);
         const categoriesToUpdate = userCategories.reduce((resultArray, currentCategory) => {
             if (currentCategory.categoryIndex === draggedItemIndex) {
                 const categoryWithNewIndex = currentCategory;
@@ -107,6 +110,32 @@ export class CategoryService {
         const updatedCategories = await this.categoryRepository.save(categoriesToUpdate);
 
         return updatedCategories;
+    }
+
+    async findIncomeCategoryById(userId: string): Promise<Category> {
+        const CATEGORY_FIELDS = [
+            'category.id',
+            'category.name',
+            'category.user',
+            'category.description',
+            'category.categoryIndex',
+            'category.isActive',
+            'category.isIncome',
+            'category.createdAt',
+            'category.updatedAt',
+        ];
+        const incomeCategory = await this.categoryRepository
+            .createQueryBuilder('category')
+            .select(CATEGORY_FIELDS)
+            .where("category.user = :userId AND category.isIncome = true", { userId: userId })
+            .getOne();
+        console.log('---> incomeCategory ', incomeCategory);
+        //const isIncomeExist = incomeCategory ? true: false;
+        return incomeCategory;
+    }
+
+    async saveIncomeCategory(incomeCategory: Category): Promise<Category> {
+        return await this.categoryRepository.save(incomeCategory);
     }
 
     //   async getExpenceByCategory(category: string) {

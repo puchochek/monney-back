@@ -21,8 +21,9 @@ export class CategoryController {
         categoryToSave.description = newCategory.description;
         categoryToSave.user = newCategory.user;
         categoryToSave.isActive = newCategory.isActive;
+        categoryToSave.isIncome = false;
 
-        const result: Category = await this.categoryService.upsertCategory(categoryToSave);
+        const result: Category = await this.categoryService.upsertExpenseCategory(categoryToSave);
         if (!result) {
             console.log('Error');
         }
@@ -40,9 +41,32 @@ export class CategoryController {
         return result;
     }
 
+    @Post('income')
+    async checkIncome(@Body() userIdData: any): Promise<Category> {
+        const existedIncome: Category = await this.categoryService.findIncomeCategoryById(userIdData.userId);
+        console.log('---> existedIncome ', existedIncome);
+        if (existedIncome) {
+            return existedIncome;
+        } else {
+            const incomeCategoryToSave = new Category;
+            incomeCategoryToSave.id = this.appService.getId();
+            incomeCategoryToSave.name = `income`;
+            incomeCategoryToSave.description = `The category keeps users' incomes data`;
+            incomeCategoryToSave.user = userIdData.userId;
+            incomeCategoryToSave.isActive = true;
+            incomeCategoryToSave.isIncome = true;
+
+            const result: Category = await this.categoryService.saveIncomeCategory(incomeCategoryToSave);
+            console.log('---> checkIncome result ', result);
+            if (result) {
+                return result;
+            }
+        }
+    }
+
     @Get(':userId')
     getCategoriesByUserId(@Param('userId') userId): Promise<Category[]> {
-        return this.categoryService.getCategoriesByUserId(userId);
+        return this.categoryService.getExpenseCategoriesByUserId(userId);
     }
 
     //   @Get()

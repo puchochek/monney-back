@@ -1,6 +1,6 @@
 export class ExpenceCategory {
     id: string;
-    // date: Date;
+    isIncome: boolean;
     categoryIndex: number;
     description: string;
     name: string;

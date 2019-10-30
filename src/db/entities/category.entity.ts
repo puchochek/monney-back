@@ -41,6 +41,9 @@ export class Category {
     public isActive: boolean;
 
     @Column({ nullable: true })
+    public isIncome: boolean;
+
+    @Column({ nullable: true })
     public categoryIndex: number;
 
     @CreateDateColumn({ name: 'created_at' })
