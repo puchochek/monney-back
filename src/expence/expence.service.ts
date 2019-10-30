@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Expence } from '../db/entities/expence.entity';
+//import { NewExpence } from './expence.dto';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,8 +16,8 @@ export class ExpenceService {
 		return await this.expenceRepository.find();
 	}
 
-	async saveNewExpence(newExpence: any): Promise<Expence[]> {
-		console.log('newExpence ', newExpence);
+	async saveNewExpence(newExpence: Expence): Promise<Expence> {
+		console.log('---> EXP SERVICE newExpence ', newExpence);
 		return await this.expenceRepository.save(newExpence);
 	}
 
