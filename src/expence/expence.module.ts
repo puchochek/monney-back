@@ -7,7 +7,7 @@ import { Category } from '../db/entities/category.entity';
 import { AppService } from '../app.service';
 import { ExpenceService } from './expence.service';
 import { CategoryService } from '../category/category.service'
-import { DbModule } from 'src/db/db.module';
+import { DbModule } from '../db/db.module';
 
 @Module({
   imports: [

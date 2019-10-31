@@ -5,8 +5,8 @@ import { Expence } from '../db/entities/expence.entity';
 import { AppUser } from '../db/entities/user.entity';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
-import { DbModule } from 'src/db/db.module';
-import { ServicesModule } from 'src/services/services.module';
+import { DbModule } from '../db/db.module';
+import { ServicesModule } from '../services/services.module';
 
 @Module({
 	imports: [
