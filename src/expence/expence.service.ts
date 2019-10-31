@@ -29,4 +29,8 @@ export class ExpenceService {
 
 		return expence;
 	}
+
+	async editTransaction(tarnsactionToEdit: Expence): Promise<Expence> {
+		return await this.expenceRepository.save(tarnsactionToEdit);
+	}
 }

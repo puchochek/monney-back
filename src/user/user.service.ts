@@ -60,18 +60,12 @@ export class UserService {
 			'app_user.createdAt',
 			'app_user.updatedAt',
 		];
-		console.log('---> USER BY ID ',  await this.userRepository
-		.createQueryBuilder('app_user')
-		.select(USER_FIELDS)
-		.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
-		.leftJoinAndSelect("app_user.expences", "expence")
-		.where({ id: userId })
-		.getOne());
+
 		return await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
-			.leftJoinAndSelect("app_user.expences", "expence")
+			.leftJoinAndSelect("app_user.expences", "expence", "expence.isDeleted = false")
 			.where({ id: userId })
 			.getOne();
 	}

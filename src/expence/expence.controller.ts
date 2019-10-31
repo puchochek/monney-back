@@ -24,10 +24,8 @@ export class ExpenceController {
 		return this.expenceService.getExpenceByCategory(category);
 	}
 
-	@Post()
-	async createNewExpence(@Body() newExpence: NewExpence): Promise<Expence> {
-		console.log('---> newExpence ', newExpence );
-		//let incomeCategory: Category;
+	@Post('create')
+	async createNewTransactio(@Body() newExpence: NewExpence): Promise<Expence> {
 		const expenceToSave = new Expence;
 		expenceToSave.id = this.appService.getId();
 		expenceToSave.isDeleted = false;
@@ -35,22 +33,28 @@ export class ExpenceController {
 		expenceToSave.date = new Date(newExpence.date);
 		expenceToSave.sum = newExpence.sum;
 		expenceToSave.comment = newExpence.comment;
-console.log('---> !newExpence.categoryId ', newExpence.categoryId === 'undefined');
 		if (newExpence.categoryId === 'undefined') {
-			console.log('---> 1');
-			const incomeCategoryFuture = await this.categoryService.saveIncomeCategory(newExpence.userId);
-			const incomeCategory = <Category>incomeCategoryFuture;
+			const incomeCategoryPromise = await this.categoryService.saveIncomeCategory(newExpence.userId);
+			const incomeCategory = <Category>incomeCategoryPromise;
 			expenceToSave.category = incomeCategory.id;
 		} else {
-			console.log('---> 2');
 			expenceToSave.category = newExpence.categoryId;
 		}
-
 
 		const result: Expence = await this.expenceService.saveNewExpence(expenceToSave);
 		if (!result) {
 			console.log('Error');
 		}
 		return result;
+	}
+
+	@Post('edit')
+	async editTransaction(@Body() tarnsactionToEdit: Expence): Promise<Expence> {
+		const result: Expence = await this.expenceService.editTransaction(tarnsactionToEdit);
+		if (!result) {
+			console.log('Error');
+		}
+		return result;
+
 	}
 }
