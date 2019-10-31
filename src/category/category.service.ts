@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Category } from '../db/entities/category.entity';
 import { ExpenceCategory } from './category.dto';
 // import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppService } from '../app.service';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {Not} from "typeorm";
-import { runInThisContext } from 'vm';
 
 
 @Injectable()
@@ -14,6 +13,7 @@ export class CategoryService {
     constructor(
         @InjectRepository(Category)
         private readonly categoryRepository: Repository<Category>,
+        private appService: AppService
     ) { }
 
     // async getExpences(): Promise<Category[]> {
@@ -134,8 +134,15 @@ export class CategoryService {
         return incomeCategory;
     }
 
-    async saveIncomeCategory(incomeCategory: Category): Promise<Category> {
-        return await this.categoryRepository.save(incomeCategory);
+    async saveIncomeCategory(userId: string): Promise<Category> {
+        const incomeCategoryToSave = new Category;
+            incomeCategoryToSave.id = this.appService.getId();
+            incomeCategoryToSave.name = `income`;
+            incomeCategoryToSave.description = `The category keeps users' incomes data`;
+            incomeCategoryToSave.user = userId;
+            incomeCategoryToSave.isActive = true;
+            incomeCategoryToSave.isIncome = true;
+        return await this.categoryRepository.save(incomeCategoryToSave);
     }
 
     //   async getExpenceByCategory(category: string) {

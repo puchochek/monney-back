@@ -41,28 +41,28 @@ export class CategoryController {
         return result;
     }
 
-    @Post('income')
-    async checkIncome(@Body() userIdData: any): Promise<Category> {
-        const existedIncome: Category = await this.categoryService.findIncomeCategoryById(userIdData.userId);
-        console.log('---> existedIncome ', existedIncome);
-        if (existedIncome) {
-            return existedIncome;
-        } else {
-            const incomeCategoryToSave = new Category;
-            incomeCategoryToSave.id = this.appService.getId();
-            incomeCategoryToSave.name = `income`;
-            incomeCategoryToSave.description = `The category keeps users' incomes data`;
-            incomeCategoryToSave.user = userIdData.userId;
-            incomeCategoryToSave.isActive = true;
-            incomeCategoryToSave.isIncome = true;
+    // @Post('income')
+    // async checkIncome(@Body() userIdData: any): Promise<Category> {
+    //     const existedIncome: Category = await this.categoryService.findIncomeCategoryById(userIdData.userId);
+    //     console.log('---> existedIncome ', existedIncome);
+    //     if (existedIncome) {
+    //         return existedIncome;
+    //     } else {
+    //         const incomeCategoryToSave = new Category;
+    //         incomeCategoryToSave.id = this.appService.getId();
+    //         incomeCategoryToSave.name = `income`;
+    //         incomeCategoryToSave.description = `The category keeps users' incomes data`;
+    //         incomeCategoryToSave.user = userIdData.userId;
+    //         incomeCategoryToSave.isActive = true;
+    //         incomeCategoryToSave.isIncome = true;
 
-            const result: Category = await this.categoryService.saveIncomeCategory(incomeCategoryToSave);
-            console.log('---> checkIncome result ', result);
-            if (result) {
-                return result;
-            }
-        }
-    }
+    //         const result: Category = await this.categoryService.saveIncomeCategory(incomeCategoryToSave);
+    //         console.log('---> checkIncome result ', result);
+    //         if (result) {
+    //             return result;
+    //         }
+    //     }
+    // }
 
     @Get(':userId')
     getCategoriesByUserId(@Param('userId') userId): Promise<Category[]> {

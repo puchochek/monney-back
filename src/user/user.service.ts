@@ -60,15 +60,23 @@ export class UserService {
 			'app_user.createdAt',
 			'app_user.updatedAt',
 		];
+		console.log('---> USER BY ID ',  await this.userRepository
+		.createQueryBuilder('app_user')
+		.select(USER_FIELDS)
+		.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+		.leftJoinAndSelect("app_user.expences", "expence")
+		.where({ id: userId })
+		.getOne());
 		return await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+			.leftJoinAndSelect("app_user.expences", "expence")
 			.where({ id: userId })
 			.getOne();
 	}
 
-	async getUserByPassword(user: User): Promise<AppUser> {
+	async getUserByEmail(user: User): Promise<AppUser> {
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -82,10 +90,10 @@ export class UserService {
 		const userByEmail = await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
-			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true AND category.isIncome = false")
+			.leftJoinAndSelect("app_user.expences", "expence")
 			.where({ email: user.email })
 			.getOne();
-
 		if (this.comparePasswords(user.password, userByEmail.password)) {
 			return userByEmail;
 		}

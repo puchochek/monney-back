@@ -76,7 +76,7 @@ export class UserController {
 	@Post('autorize')
 	async autorizeUser(@Req() req,
 		@Body() user: User): Promise<AppUser> {
-		return this.userService.getUserByPassword(user);
+		return this.userService.getUserByEmail(user);
 	}
 
 	@Get('user-by-id/:id')

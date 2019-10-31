@@ -33,7 +33,7 @@ export class Expence {
   public comment: string;
 
   @ManyToOne(type => Category, category => category.expences)
-  //@JoinColumn({ name: 'category' })
+  @Column({ nullable: true })
   public category: string;
 
   @Column({ nullable: true })
