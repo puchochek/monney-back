@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '../db/entities/category.entity';
-import { ExpenceCategory } from './category.dto';
+import { TransactionCategory } from './category.dto';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from '../app.service';
 import { getRepository } from 'typeorm';
@@ -20,37 +20,18 @@ export class CategoryService {
     //     return await this.expenceRepository.find();
     // }
 
-    async upsertExpenseCategory(newCategory: Category): Promise<Category> {
-        console.log('---> categoryToUpsert ', newCategory);
-        const CATEGORY_FIELDS = [
-            'category.user',
-            'category.categoryIndex',
-            'category.isActive',
-            'category.isIncome',
-        ];
-        let categoriesBeforeUpsert: Category[] = [];
-        const lastCategory = await this.categoryRepository
-            .createQueryBuilder('category')
-            .select(CATEGORY_FIELDS)
-            .where("category.user = :userId AND category.isActive = true AND category.isIncome = false", { userId: newCategory.user })
-            .orderBy("category.categoryIndex", "DESC")
-            .getOne();
+    async upsertExpenseCategory(categoriesToUpsert: Category[]): Promise<Category[]> {
+        const userId = categoriesToUpsert[0].user;
+        const userCategories = await this.getExpenseCategoriesByUserId(userId);
+        categoriesToUpsert.forEach(categoryToUpsert => {
+            if (categoryToUpsert.categoryIndex === -1) {
+                categoryToUpsert.categoryIndex = this.getLastCategoryIndex(userCategories) + 1;
+            }
+        });
 
-        if (newCategory.isActive) {
-            newCategory.categoryIndex = lastCategory ?
-                lastCategory.categoryIndex + 1
-                : 0;
-        } else {
-            categoriesBeforeUpsert = await this.getExpenseCategoriesByUserId(newCategory.user);
-        }
+        const upsertedCategories = await this.categoryRepository.save(categoriesToUpsert);
 
-        const upsertedCategory = await this.categoryRepository.save(newCategory);
-
-        if (upsertedCategory && !upsertedCategory.isActive) {
-            this.updateCategoriesOrder(categoriesBeforeUpsert, newCategory);
-        }
-
-        return upsertedCategory;
+        return upsertedCategories;
     }
 
     async getExpenseCategoriesByUserId(userId: string): Promise<Category[]> {
@@ -110,6 +91,12 @@ export class CategoryService {
         const updatedCategories = await this.categoryRepository.save(categoriesToUpdate);
 
         return updatedCategories;
+    }
+
+    getLastCategoryIndex(userCategories: Category[]): number {
+        const userCategoriesSortedByIndex = userCategories.sort((a, b) => (a.categoryIndex > b.categoryIndex) ? 1 : -1);
+        const lastCategoryIndex =  userCategoriesSortedByIndex[userCategoriesSortedByIndex.length - 1].categoryIndex;
+        return lastCategoryIndex;
     }
 
     async findIncomeCategoryById(userId: string): Promise<Category> {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Req } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { CategoryService } from './category.service';
 import { Category } from '../db/entities/category.entity';
-import { ExpenceCategory } from './category.dto';
+import { TransactionCategory } from './category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -12,18 +12,24 @@ export class CategoryController {
     ) { }
 
     @Post('upsert')
-    async upsertCategory(@Body() newCategory: ExpenceCategory): Promise<Category> {
-        const categoryToSave = new Category;
-        categoryToSave.id = newCategory.id ?
-            newCategory.id
-            : this.appService.getId();
-        categoryToSave.name = newCategory.name;
-        categoryToSave.description = newCategory.description;
-        categoryToSave.user = newCategory.user;
-        categoryToSave.isActive = newCategory.isActive;
-        categoryToSave.isIncome = false;
+    async upsertCategory(@Body() categoriesToUpsert: any): Promise<Category[]> {
+        let categories: Category[] = [];
+        categoriesToUpsert.categoriesToUpsert.forEach(categoryToUpsert => {
+            const categoryToSave = new Category;
+            categoryToSave.id = categoryToUpsert.id ?
+            categoryToUpsert.id
+                : this.appService.getId();
+                categoryToUpsert.name = categoryToUpsert.name;
+            categoryToSave.description = categoryToUpsert.description;
+            categoryToSave.user = categoryToUpsert.user;
+            categoryToSave.name = categoryToUpsert.name;
+            categoryToSave.isActive = categoryToUpsert.isActive;
+            categoryToSave.isIncome = false;
+            categoryToSave.categoryIndex = isNaN(categoryToUpsert.categoryIndex) ? -1 : categoryToUpsert.categoryIndex;
+            categories.push(categoryToSave);
+        });
 
-        const result: Category = await this.categoryService.upsertExpenseCategory(categoryToSave);
+        const result: Category[] = await this.categoryService.upsertExpenseCategory(categories);
         if (!result) {
             console.log('Error');
         }

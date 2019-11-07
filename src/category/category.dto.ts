@@ -1,4 +1,4 @@
-export class ExpenceCategory {
+export class TransactionCategory {
     id: string;
     isIncome: boolean;
     categoryIndex: number;
