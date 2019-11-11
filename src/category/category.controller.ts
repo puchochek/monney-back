@@ -47,6 +47,11 @@ export class CategoryController {
         return result;
     }
 
+    @Get(':categoryId')
+    getCategoryId(@Param('categoryId') categoryId): Promise<Category> {
+        return this.categoryService.getCategoryById(categoryId);
+    }
+
     // @Post('income')
     // async checkIncome(@Body() userIdData: any): Promise<Category> {
     //     const existedIncome: Category = await this.categoryService.findIncomeCategoryById(userIdData.userId);

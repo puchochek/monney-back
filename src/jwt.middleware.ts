@@ -52,9 +52,11 @@ export class JwtMiddleware implements NestMiddleware {
             userId = this.jwtService.verifyJwt(oldToken).data;
             newToken = this.jwtService.generateToken(userId, expiresIn);
 
+            //res.set('Content-Type', 'application/json');
+
             res.set('Access-Control-Expose-Headers', 'Authorization');
             res.set('Authorization', `Bearer ${newToken}`);
-
+            //console.log('---> res ', res);
             next();
         };
     }

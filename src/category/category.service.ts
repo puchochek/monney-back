@@ -132,6 +132,28 @@ export class CategoryService {
         return await this.categoryRepository.save(incomeCategoryToSave);
     }
 
+    async getCategoryById(categoryId: string): Promise<Category> {
+        const CATEGORY_FIELDS = [
+            'category.id',
+            'category.name',
+            'category.user',
+            'category.description',
+            'category.categoryIndex',
+            'category.isActive',
+            'category.isIncome',
+            'category.createdAt',
+            'category.updatedAt',
+        ];
+        const category = await this.categoryRepository
+            .createQueryBuilder('category')
+            .select(CATEGORY_FIELDS)
+            .where("category.id = :categoryId", { categoryId: categoryId })
+            .getOne();
+        console.log('---> category ', category);
+        return category;
+
+    }
+
     //   async getExpenceByCategory(category: string) {
     //     const expence = await getRepository(Category)
     //       .createQueryBuilder('Expence')
