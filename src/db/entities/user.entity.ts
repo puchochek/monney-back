@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 import { Category } from './category.entity';
-import { Expence } from './expence.entity';
+import { Transaction } from './transaction.entity';
 
 @Entity()
 export class AppUser {
@@ -25,8 +25,8 @@ export class AppUser {
   @OneToMany(type => Category, category => category.user)
   public categories: Category[];
 
-  @OneToMany(type => Expence, expence => expence.user)
-  public expences: Expence[];
+  @OneToMany(type => Transaction, transaction => transaction.user)
+  public transactions: Transaction[];
 
   @Column({ nullable: true })
   public name: string;

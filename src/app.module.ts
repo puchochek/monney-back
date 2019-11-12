@@ -6,29 +6,28 @@ import { AppService } from './app.service';
 import { UserService } from './user/user.service';
 import { CategoryService } from './category/category.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Expence } from './db/entities/expence.entity';
+import { Transaction } from './db/entities/transaction.entity';
 import { AppUser } from './db/entities/user.entity';
 import { Category } from './db/entities/category.entity';
 import { UserModule } from './user/user.module';
-import { ExpenceModule } from './expence/expence.module';
 import { ServicesModule } from './services/services.module';
 import { DbModule } from './db/db.module';
 import { CategoryModule } from './category/category.module';
-
 import { JwtMiddleware } from './jwt.middleware';
+import { TransactionModule } from './transaction/transaction.module';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Expence]),
+    TypeOrmModule.forFeature([Transaction]),
     TypeOrmModule.forFeature([AppUser]),
     TypeOrmModule.forFeature([Category]),
     UserModule,
-    ExpenceModule,
     ServicesModule,
     TypeOrmModule,
     DbModule,
     CategoryModule,
+    TransactionModule,
     // JwtMiddleware
   ],
   controllers: [AppController, UserController, CategoryController],

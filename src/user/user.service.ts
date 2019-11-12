@@ -65,7 +65,7 @@ export class UserService {
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
-			.leftJoinAndSelect("app_user.expences", "expence", "expence.isDeleted = false")
+			.leftJoinAndSelect("app_user.transactions", "transaction", "transaction.isDeleted = false")
 			.where({ id: userId })
 			.getOne();
 	}
@@ -85,7 +85,7 @@ export class UserService {
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true AND category.isIncome = false")
-			.leftJoinAndSelect("app_user.expences", "expence")
+			.leftJoinAndSelect("app_user.transactions", "transaction")
 			.where({ email: user.email })
 			.getOne();
 		if (this.comparePasswords(user.password, userByEmail.password)) {

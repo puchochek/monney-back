@@ -94,6 +94,10 @@ export class CategoryService {
     }
 
     getLastCategoryIndex(userCategories: Category[]): number {
+        console.log('---> userCategories ', userCategories);
+        if (userCategories.length === 0) {
+            return -1;
+        }
         const userCategoriesSortedByIndex = userCategories.sort((a, b) => (a.categoryIndex > b.categoryIndex) ? 1 : -1);
         const lastCategoryIndex =  userCategoriesSortedByIndex[userCategoriesSortedByIndex.length - 1].categoryIndex;
         return lastCategoryIndex;

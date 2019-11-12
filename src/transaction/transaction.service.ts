@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { Expence } from '../db/entities/expence.entity';
+import { Transaction } from '../db/entities/transaction.entity';
 //import { NewExpence } from './expence.dto';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ExpenceService {
+export class TransactionService {
 	constructor(
-		@InjectRepository(Expence)
-		private readonly expenceRepository: Repository<Expence>,
+		@InjectRepository(Transaction)
+		private readonly expenceRepository: Repository<Transaction>,
 	) { }
 
-	async getExpences(): Promise<Expence[]> {
+	async getExpences(): Promise<Transaction[]> {
 		return await this.expenceRepository.find();
 	}
 
-	async saveNewExpence(newExpence: Expence): Promise<Expence> {
+	async saveNewExpence(newExpence: Transaction): Promise<Transaction> {
 		console.log('---> EXP SERVICE newExpence ', newExpence);
 		return await this.expenceRepository.save(newExpence);
 	}
 
 	async getExpenceByCategory(category: string) {
-		const expence = await getRepository(Expence)
+		const expence = await getRepository(Transaction)
 			.createQueryBuilder('Expence')
 			.where('Expence.type = :type', { type: category })
 			.getMany();
@@ -30,7 +30,7 @@ export class ExpenceService {
 		return expence;
 	}
 
-	async editTransaction(tarnsactionToEdit: Expence): Promise<Expence> {
+	async editTransaction(tarnsactionToEdit: Transaction): Promise<Transaction> {
 		return await this.expenceRepository.save(tarnsactionToEdit);
 	}
 }

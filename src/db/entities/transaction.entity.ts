@@ -11,40 +11,36 @@ import {
     PrimaryColumn,
     Unique,
     UpdateDateColumn,
-    Generated,
-    PrimaryGeneratedColumn
-  } from 'typeorm';
+} from 'typeorm';
 
-  import { Transaction } from './transaction.entity';
-  import { AppUser } from './user.entity';
+import { Category } from './category.entity';
+import { AppUser } from './user.entity';
 
 @Entity()
-export class Category {
+export class Transaction {
 
-    @PrimaryColumn('uuid')
+    @PrimaryColumn()
     public id: string;
 
-    @ManyToOne(type => AppUser, user => user.categories)
+    @ManyToOne(type => AppUser, user => user.transactions)
     @Column({ nullable: true })
     public user: string;
 
-    @OneToMany(type => Transaction, transaction => transaction.category)
-    public transactions: Transaction[];
+    @Column({ nullable: true })
+    public date: Date;
 
     @Column({ nullable: true })
-    public name: string;
+    public comment: string;
+
+    @ManyToOne(type => Category, category => category.transactions)
+    @Column({ nullable: true })
+    public category: string;
 
     @Column({ nullable: true })
-    public description: string;
+    public sum: string;
 
     @Column({ nullable: true })
-    public isActive: boolean;
-
-    @Column({ nullable: true })
-    public isIncome: boolean;
-
-    @Column({ nullable: true })
-    public categoryIndex: number;
+    public isDeleted: boolean;
 
     @CreateDateColumn({ name: 'created_at' })
     public createdAt: Date;
