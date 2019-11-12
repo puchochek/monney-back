@@ -94,7 +94,6 @@ export class CategoryService {
     }
 
     getLastCategoryIndex(userCategories: Category[]): number {
-        console.log('---> userCategories ', userCategories);
         if (userCategories.length === 0) {
             return -1;
         }
@@ -125,16 +124,16 @@ export class CategoryService {
         return incomeCategory;
     }
 
-    async saveIncomeCategory(userId: string): Promise<Category> {
-        const incomeCategoryToSave = new Category;
-            incomeCategoryToSave.id = this.appService.getId();
-            incomeCategoryToSave.name = `income`;
-            incomeCategoryToSave.description = `The category keeps users' incomes data`;
-            incomeCategoryToSave.user = userId;
-            incomeCategoryToSave.isActive = true;
-            incomeCategoryToSave.isIncome = true;
-        return await this.categoryRepository.save(incomeCategoryToSave);
-    }
+    // async createIncomeCategory(userId: string): Promise<Category> {
+    //     const incomeCategoryToSave = new Category;
+    //         incomeCategoryToSave.id = this.appService.getId();
+    //         incomeCategoryToSave.name = `income`;
+    //         incomeCategoryToSave.description = `The category keeps users' incomes data`;
+    //         incomeCategoryToSave.user = userId;
+    //         incomeCategoryToSave.isActive = true;
+    //         incomeCategoryToSave.isIncome = true;
+    //     return await this.categoryRepository.save(incomeCategoryToSave);
+    // }
 
     async getCategoryById(categoryId: string): Promise<Category> {
         const CATEGORY_FIELDS = [

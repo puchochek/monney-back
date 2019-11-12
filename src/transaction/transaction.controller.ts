@@ -15,17 +15,17 @@ export class TransactionController {
     ) { }
 
     @Get()
-    getExpences(): Promise<Transaction[]> {
-        return this.transactionService.getExpences();
+    getTransactions(): Promise<Transaction[]> {
+        return this.transactionService.getTransactions();
     }
 
     @Get(':category')
     getExpenceByCategory(@Param('category') category): Promise<Transaction[]> {
-        return this.transactionService.getExpenceByCategory(category);
+        return this.transactionService.getTransactionsByCategory(category);
     }
 
     @Post('create')
-    async createNewTransactio(@Body() newExpence: IncomingTransaction): Promise<Transaction> {
+    async createNewTransaction(@Body() newExpence: IncomingTransaction): Promise<Transaction> {
         const expenceToSave = new Transaction;
         expenceToSave.id = this.appService.getId();
         expenceToSave.isDeleted = false;
@@ -33,13 +33,13 @@ export class TransactionController {
         expenceToSave.date = new Date(newExpence.date);
         expenceToSave.sum = newExpence.sum;
         expenceToSave.comment = newExpence.comment;
-        if (newExpence.categoryId === 'undefined') {
-            const incomeCategoryPromise = await this.categoryService.saveIncomeCategory(newExpence.userId);
-            const incomeCategory = <Category>incomeCategoryPromise;
-            expenceToSave.category = incomeCategory.id;
-        } else {
+        // if (newExpence.categoryId === 'undefined') {
+        //     const incomeCategoryPromise = await this.categoryService.saveIncomeCategory(newExpence.userId);
+        //     const incomeCategory = <Category>incomeCategoryPromise;
+        //     expenceToSave.category = incomeCategory.id;
+        // } else {
             expenceToSave.category = newExpence.categoryId;
-        }
+        // }
 
         const result: Transaction = await this.transactionService.saveNewExpence(expenceToSave);
         if (!result) {

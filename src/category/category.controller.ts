@@ -24,7 +24,7 @@ export class CategoryController {
             categoryToSave.user = categoryToUpsert.user;
             categoryToSave.name = categoryToUpsert.name;
             categoryToSave.isActive = categoryToUpsert.isActive;
-            categoryToSave.isIncome = false;
+            categoryToSave.isIncome = categoryToUpsert.isIncome;
             categoryToSave.categoryIndex = isNaN(categoryToUpsert.categoryIndex) ? -1 : categoryToUpsert.categoryIndex;
             categories.push(categoryToSave);
         });

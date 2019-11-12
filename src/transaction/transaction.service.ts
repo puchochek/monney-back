@@ -12,7 +12,7 @@ export class TransactionService {
 		private readonly expenceRepository: Repository<Transaction>,
 	) { }
 
-	async getExpences(): Promise<Transaction[]> {
+	async getTransactions(): Promise<Transaction[]> {
 		return await this.expenceRepository.find();
 	}
 
@@ -21,10 +21,10 @@ export class TransactionService {
 		return await this.expenceRepository.save(newExpence);
 	}
 
-	async getExpenceByCategory(category: string) {
+	async getTransactionsByCategory(category: string) {
 		const expence = await getRepository(Transaction)
-			.createQueryBuilder('Expence')
-			.where('Expence.type = :type', { type: category })
+			.createQueryBuilder('transaction')
+			.where('transaction.category = :category', { category: category })
 			.getMany();
 
 		return expence;
