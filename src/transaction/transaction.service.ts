@@ -16,9 +16,9 @@ export class TransactionService {
 		return await this.expenceRepository.find();
 	}
 
-	async saveNewExpence(newExpence: Transaction): Promise<Transaction> {
-		console.log('---> EXP SERVICE newExpence ', newExpence);
-		return await this.expenceRepository.save(newExpence);
+	async saveNewExpence(newExpences: Transaction[]): Promise<Transaction[]> {
+		console.log('---> EXP SERVICE newExpence ', newExpences);
+		return await this.expenceRepository.save(newExpences);
 	}
 
 	async getTransactionsByCategory(category: string) {
@@ -30,7 +30,7 @@ export class TransactionService {
 		return expence;
 	}
 
-	async editTransaction(tarnsactionToEdit: Transaction): Promise<Transaction> {
-		return await this.expenceRepository.save(tarnsactionToEdit);
+	async upsertTransaction(tarnsactionsToUpsert: Transaction[]): Promise<Transaction[]> {
+		return await this.expenceRepository.save(tarnsactionsToUpsert);
 	}
 }

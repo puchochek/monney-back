@@ -25,23 +25,21 @@ export class TransactionController {
     }
 
     @Post('create')
-    async createNewTransaction(@Body() newExpence: IncomingTransaction): Promise<Transaction> {
-        const expenceToSave = new Transaction;
-        expenceToSave.id = this.appService.getId();
-        expenceToSave.isDeleted = false;
-        expenceToSave.user = newExpence.userId;
-        expenceToSave.date = new Date(newExpence.date);
-        expenceToSave.sum = newExpence.sum;
-        expenceToSave.comment = newExpence.comment;
-        // if (newExpence.categoryId === 'undefined') {
-        //     const incomeCategoryPromise = await this.categoryService.saveIncomeCategory(newExpence.userId);
-        //     const incomeCategory = <Category>incomeCategoryPromise;
-        //     expenceToSave.category = incomeCategory.id;
-        // } else {
-            expenceToSave.category = newExpence.categoryId;
-        // }
+    async createNewTransaction(@Body() newExpences: any): Promise<Transaction[]> {
+        let expencesToSave: Transaction[] = [];
+        newExpences.transactionsToUpsert.forEach(newExpence => {
+            const expenceToSave = new Transaction;
+            expenceToSave.id = this.appService.getId();
+            expenceToSave.isDeleted = false;
+            expenceToSave.user = newExpence.userId;
+            expenceToSave.date = new Date(newExpence.date);
+            expenceToSave.sum = newExpence.sum;
+            expenceToSave.comment = newExpence.comment;
+            expenceToSave.category = newExpence.category;
+            expencesToSave.push(expenceToSave);
+        });
 
-        const result: Transaction = await this.transactionService.saveNewExpence(expenceToSave);
+        const result: Transaction[] = await this.transactionService.saveNewExpence(expencesToSave);
         if (!result) {
             console.log('Error');
         }
@@ -49,8 +47,17 @@ export class TransactionController {
     }
 
     @Post('edit')
-    async editTransaction(@Body() tarnsactionToEdit: Transaction): Promise<Transaction> {
-        const result: Transaction = await this.transactionService.editTransaction(tarnsactionToEdit);
+    async editTransaction(@Body() transactionsToUpsert: any): Promise<Transaction[]> {
+        console.log('---> editTransaction ', transactionsToUpsert.transactionsToUpsert);
+        // const expenceToSave = new Transaction;
+        // expenceToSave.id = this.appService.getId();
+        // expenceToSave.isDeleted = false;
+        // expenceToSave.user = newExpence.userId;
+        // expenceToSave.date = new Date(newExpence.date);
+        // expenceToSave.sum = newExpence.sum;
+        // expenceToSave.comment = newExpence.comment;
+        // expenceToSave.category = newExpence.categoryId;
+        const result: Transaction[] = await this.transactionService.upsertTransaction(transactionsToUpsert.transactionsToUpsert);
         if (!result) {
             console.log('Error');
         }
