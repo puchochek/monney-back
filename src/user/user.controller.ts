@@ -21,7 +21,6 @@ export class UserController {
 	@Post('token')
 	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
 		const userId = this.jwtService.decodeJwt(token).data;
-		console.log('userId ', userId);
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -36,7 +35,6 @@ export class UserController {
 			.select(USER_FIELDS)
 			.where({ id: userId })
 			.getOne();
-		console.log('result ', result);
 		if (result) {
 			const userToUpdate = result;
 			userToUpdate.isConfirmed = true;
@@ -44,7 +42,6 @@ export class UserController {
 			const updatedUser = await this.connection
 				.getRepository(AppUser)
 				.save(userToUpdate);
-			console.log('----> updatedUser ', updatedUser);
 			return updatedUser;
 		}
 		// TODO What do I have to return in case of fail?
@@ -54,7 +51,6 @@ export class UserController {
 	@Post('register')
 	async hashPassword(@Body() user: User): Promise<AppUser[]> {
 		const userToSave = user;
-		// TODO add validation for all params + Validate email and password on frontEnd
 		userToSave.id = this.appService.getId();
 		userToSave.name = this.userService.validateUserName(user.name);
 		userToSave.email = this.userService.validateEmail(user.email);

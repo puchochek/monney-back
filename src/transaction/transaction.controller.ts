@@ -49,14 +49,6 @@ export class TransactionController {
     @Post('edit')
     async editTransaction(@Body() transactionsToUpsert: any): Promise<Transaction[]> {
         console.log('---> editTransaction ', transactionsToUpsert.transactionsToUpsert);
-        // const expenceToSave = new Transaction;
-        // expenceToSave.id = this.appService.getId();
-        // expenceToSave.isDeleted = false;
-        // expenceToSave.user = newExpence.userId;
-        // expenceToSave.date = new Date(newExpence.date);
-        // expenceToSave.sum = newExpence.sum;
-        // expenceToSave.comment = newExpence.comment;
-        // expenceToSave.category = newExpence.categoryId;
         const result: Transaction[] = await this.transactionService.upsertTransaction(transactionsToUpsert.transactionsToUpsert);
         if (!result) {
             console.log('Error');

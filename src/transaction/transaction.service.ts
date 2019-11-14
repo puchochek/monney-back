@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '../db/entities/transaction.entity';
-//import { NewExpence } from './expence.dto';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
