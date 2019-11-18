@@ -12,8 +12,6 @@ export class EmailService {
 	private server;
 
 	constructor(private jwtService: JwtService) {
-		console.log(process.env.EMAIL_USER);
-		console.log(process.env.EMAIL_PASS);
 		this.server = nodemailer.createTransport({
 			service: 'SendGrid',
 			auth: {

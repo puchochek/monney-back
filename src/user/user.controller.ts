@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { AppUser } from '../db/entities/user.entity';
@@ -7,6 +7,7 @@ import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { Connection } from 'typeorm';
 import { AuthGuard } from '../auth.guard';
+import * as dotenv from 'dotenv';
 
 @Controller('user')
 export class UserController {
@@ -81,10 +82,62 @@ export class UserController {
 		console.log('---> getUserById ', id);
 		return this.userService.getUserById(id);
 	}
+
 	/* Returns nothing but set appropriate header*/
 	@Get('user-token/:userId')
 	getActivatedUserToken(@Param('userId') userId: string) {
 		console.log('---> user-token userId ', userId);
+	}
+
+	@Post('avatar/:id')
+	saveUserAvatarToCloud(@Req() req, @Res() res,
+		@Param('id') id: string) {
+		const multer = require('multer')
+		const storage = multer.diskStorage({
+			destination: function (req, file, cb) {
+				cb(null, 'uploads/');
+			},
+			filename: function (req, file, cb) {
+				cb(null, file.originalname);
+			}
+		});
+		const upload = multer({ storage }).single('avatar');
+
+		upload(req, res, function (err) {
+			if (err) {
+				return res.send(err);
+			}
+
+			// SEND FILE TO CLOUDINARY
+			const cloudinary = require('cloudinary').v2
+			cloudinary.config({
+				cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+				api_key: process.env.CLOUDINARY_API_KEY,
+				api_secret: process.env.CLOUDINARY_API_SECRET
+			})
+
+			const path = req.file.path;
+			cloudinary.uploader.upload(
+				path,
+				{ public_id: `avatar/${id}`, tags: `avatar` },
+				function (err, image) {
+					if (err) {
+						return res.send(err);
+					}
+					// remove file from server
+					const fs = require('fs');
+					fs.unlinkSync(path);
+					// return image details
+					res.json(image);
+				}
+			)
+		})
+	}
+
+	@Post('update')
+	async updateUser(@Req() req,
+		@Body() user: any): Promise<AppUser[]> {
+		return this.userService.updateUser(user.user);
 	}
 
 }

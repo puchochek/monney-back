@@ -95,6 +95,11 @@ export class UserService {
 		return null;
 	}
 
+	async updateUser(user: User[]): Promise<AppUser[]> {
+
+		return await this.userRepository.save(user);
+	}
+
 	// async getUsers(): Promise<AppUser[]> {
 	// 	return await this.userRepository.find();
 	// }

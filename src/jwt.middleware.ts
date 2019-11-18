@@ -42,6 +42,17 @@ export class JwtMiddleware implements NestMiddleware {
                 return next();
             }
 
+            if (req.baseUrl.includes(`/user/avatar`)) {
+                const urlId = req.baseUrl.substring(13);
+                console.log('---> urlId SBSTR ', urlId);
+                newToken = this.jwtService.generateToken(urlId, expiresIn);
+
+                res.set('Access-Control-Expose-Headers', 'Authorization');
+                res.set('Authorization', `Bearer ${newToken}`);
+
+                return next();
+            }
+
             if (!req.headers.authorization) {
                 console.log('---> no req.headers.authorization');
                 return next();
