@@ -73,7 +73,7 @@ export class UserController {
 	@Post('autorize')
 	async autorizeUser(@Req() req,
 		@Body() user: User): Promise<AppUser> {
-		return this.userService.getUserByEmail(user);
+		return this.userService.getUserByPassword(user);
 	}
 
 	@Get('user-by-id/:id')
@@ -98,6 +98,7 @@ export class UserController {
 				cb(null, 'uploads/');
 			},
 			filename: function (req, file, cb) {
+				console.log('---> file ', file);
 				cb(null, file.originalname);
 			}
 		});
@@ -105,11 +106,13 @@ export class UserController {
 
 		upload(req, res, function (err) {
 			if (err) {
+				console.log('---> err 1 ', err);
 				return res.send(err);
 			}
 
 			// SEND FILE TO CLOUDINARY
 			const cloudinary = require('cloudinary').v2
+			console.log('---> ENV ', process.env.CLOUDINARY_CLOUD_NAME, ' ', process.env.CLOUDINARY_API_KEY, ' ', process.env.CLOUDINARY_API_SECRET );
 			cloudinary.config({
 				cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 				api_key: process.env.CLOUDINARY_API_KEY,
@@ -117,11 +120,13 @@ export class UserController {
 			})
 
 			const path = req.file.path;
+			console.log('---> path ', path);
 			cloudinary.uploader.upload(
 				path,
 				{ public_id: `avatar/${id}`, tags: `avatar` },
 				function (err, image) {
 					if (err) {
+						console.log('---> err 2 ', err);
 						return res.send(err);
 					}
 					// remove file from server

@@ -70,7 +70,7 @@ export class UserService {
 			.getOne();
 	}
 
-	async getUserByEmail(user: User): Promise<AppUser> {
+	async getUserByPassword(user: User): Promise<AppUser> {
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -89,6 +89,7 @@ export class UserService {
 			.where({ email: user.email })
 			.getOne();
 		if (this.comparePasswords(user.password, userByEmail.password)) {
+			console.log('---> ', this.comparePasswords(user.password, userByEmail.password) );
 			return userByEmail;
 		}
 
