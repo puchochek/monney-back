@@ -133,6 +133,7 @@ export class UserController {
 					const fs = require('fs');
 					fs.unlinkSync(path);
 					// return image details
+					console.log('---> image ', image);
 					res.json(image);
 				}
 			)
