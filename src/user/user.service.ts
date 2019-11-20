@@ -66,11 +66,11 @@ export class UserService {
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
 			.leftJoinAndSelect("app_user.transactions", "transaction", "transaction.isDeleted = false")
-			.where({ id: userId })
+			.where("app_user.id = :id AND app_user.isConfirmed = true", { id: userId })
 			.getOne();
 	}
 
-	async getUserByPassword(user: User): Promise<AppUser> {
+	async getUserByEmail(user: User): Promise<AppUser> {
 		const USER_FIELDS = [
 			'app_user.id',
 			'app_user.name',
@@ -86,10 +86,9 @@ export class UserService {
 			.select(USER_FIELDS)
 			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true AND category.isIncome = false")
 			.leftJoinAndSelect("app_user.transactions", "transaction")
-			.where({ email: user.email })
+			.where("app_user.email = :email AND app_user.isConfirmed = true", { email: user.email })
 			.getOne();
 		if (this.comparePasswords(user.password, userByEmail.password)) {
-			console.log('---> ', this.comparePasswords(user.password, userByEmail.password) );
 			return userByEmail;
 		}
 

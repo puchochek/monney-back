@@ -37,7 +37,7 @@ export class Transaction {
     public category: string;
 
     @Column({ nullable: true })
-    public sum: string;
+    public sum: number;
 
     @Column({ nullable: true })
     public isDeleted: boolean;
