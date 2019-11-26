@@ -36,7 +36,7 @@ export class Transaction {
     @Column({ nullable: true })
     public category: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: "float" })
     public sum: number;
 
     @Column({ nullable: true })
