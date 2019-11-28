@@ -31,7 +31,7 @@ export class Category {
     @OneToMany(type => Transaction, transaction => transaction.category)
     public transactions: Transaction[];
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     public name: string;
 
     @Column({ nullable: true })

@@ -6,6 +6,7 @@ import { AppService } from '../app.service';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CATEGORY_FIELDS } from '../db/scopes/Category';
 
 
 @Injectable()
@@ -35,18 +36,6 @@ export class CategoryService {
     }
 
     async getExpenseCategoriesByUserId(userId: string): Promise<Category[]> {
-        const CATEGORY_FIELDS = [
-            'category.id',
-            'category.name',
-            'category.user',
-            'category.description',
-            'category.categoryIndex',
-            'category.isIncome',
-            'category.isActive',
-            'category.createdAt',
-            'category.updatedAt',
-            'category.icon'
-        ];
         const userCategories = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
@@ -104,18 +93,6 @@ export class CategoryService {
     }
 
     async findIncomeCategoryById(userId: string): Promise<Category> {
-        const CATEGORY_FIELDS = [
-            'category.id',
-            'category.name',
-            'category.user',
-            'category.description',
-            'category.categoryIndex',
-            'category.isActive',
-            'category.isIncome',
-            'category.createdAt',
-            'category.updatedAt',
-            'category.icon'
-        ];
         const incomeCategory = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
@@ -138,18 +115,6 @@ export class CategoryService {
     // }
 
     async getCategoryById(categoryId: string): Promise<Category> {
-        const CATEGORY_FIELDS = [
-            'category.id',
-            'category.name',
-            'category.user',
-            'category.description',
-            'category.categoryIndex',
-            'category.isActive',
-            'category.isIncome',
-            'category.createdAt',
-            'category.updatedAt',
-            'category.icon'
-        ];
         const category = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)

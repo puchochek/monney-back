@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from '../services/email.service';
 import { User } from './user.dto';
+import { USER_FIELDS } from '../db/scopes/AppUser';
 
 const saltRounds = 10;
 
@@ -50,16 +51,6 @@ export class UserService {
 	}
 
 	async getUserById(userId: string): Promise<AppUser> {
-		const USER_FIELDS = [
-			'app_user.id',
-			'app_user.name',
-			'app_user.email',
-			'app_user.password',
-			'app_user.isConfirmed',
-			'app_user.avatar',
-			'app_user.createdAt',
-			'app_user.updatedAt',
-		];
 
 		return await this.userRepository
 			.createQueryBuilder('app_user')
@@ -71,16 +62,6 @@ export class UserService {
 	}
 
 	async getUserByEmail(user: User): Promise<AppUser> {
-		const USER_FIELDS = [
-			'app_user.id',
-			'app_user.name',
-			'app_user.email',
-			'app_user.password',
-			'app_user.isConfirmed',
-			'app_user.avatar',
-			'app_user.createdAt',
-			'app_user.updatedAt',
-		];
 		const userByEmail = await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
