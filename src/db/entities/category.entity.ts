@@ -35,6 +35,9 @@ export class Category {
     public name: string;
 
     @Column({ nullable: true })
+    public icon: string;
+
+    @Column({ nullable: true })
     public description: string;
 
     @Column({ nullable: true })

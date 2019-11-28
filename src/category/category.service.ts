@@ -45,6 +45,7 @@ export class CategoryService {
             'category.isActive',
             'category.createdAt',
             'category.updatedAt',
+            'category.icon'
         ];
         const userCategories = await this.categoryRepository
             .createQueryBuilder('category')
@@ -113,6 +114,7 @@ export class CategoryService {
             'category.isIncome',
             'category.createdAt',
             'category.updatedAt',
+            'category.icon'
         ];
         const incomeCategory = await this.categoryRepository
             .createQueryBuilder('category')
@@ -146,6 +148,7 @@ export class CategoryService {
             'category.isIncome',
             'category.createdAt',
             'category.updatedAt',
+            'category.icon'
         ];
         const category = await this.categoryRepository
             .createQueryBuilder('category')
