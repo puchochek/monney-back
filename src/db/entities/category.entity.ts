@@ -19,6 +19,7 @@ import {
   import { AppUser } from './user.entity';
 
 @Entity()
+@Unique(["name"])
 export class Category {
 
     @PrimaryColumn('uuid')

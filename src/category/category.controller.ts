@@ -17,9 +17,9 @@ export class CategoryController {
         categoriesToUpsert.categoriesToUpsert.forEach(categoryToUpsert => {
             const categoryToSave = new Category;
             categoryToSave.id = categoryToUpsert.id ?
-            categoryToUpsert.id
+                categoryToUpsert.id
                 : this.appService.getId();
-                categoryToUpsert.name = categoryToUpsert.name;
+            categoryToUpsert.name = categoryToUpsert.name;
             categoryToSave.description = categoryToUpsert.description;
             categoryToSave.user = categoryToUpsert.user;
             categoryToSave.name = categoryToUpsert.name;
@@ -48,58 +48,10 @@ export class CategoryController {
         return result;
     }
 
-    @Get(':categoryId')
-    getCategoryId(@Param('categoryId') categoryId): Promise<Category> {
-        return this.categoryService.getCategoryById(categoryId);
+    @Get(':categoryName')
+    getCategoryByName(@Param('categoryName') categoryName): Promise<Category> {
+
+        return this.categoryService.getCategoryByName(categoryName);
     }
 
-    // @Post('income')
-    // async checkIncome(@Body() userIdData: any): Promise<Category> {
-    //     const existedIncome: Category = await this.categoryService.findIncomeCategoryById(userIdData.userId);
-    //     console.log('---> existedIncome ', existedIncome);
-    //     if (existedIncome) {
-    //         return existedIncome;
-    //     } else {
-    //         const incomeCategoryToSave = new Category;
-    //         incomeCategoryToSave.id = this.appService.getId();
-    //         incomeCategoryToSave.name = `income`;
-    //         incomeCategoryToSave.description = `The category keeps users' incomes data`;
-    //         incomeCategoryToSave.user = userIdData.userId;
-    //         incomeCategoryToSave.isActive = true;
-    //         incomeCategoryToSave.isIncome = true;
-
-    //         const result: Category = await this.categoryService.saveIncomeCategory(incomeCategoryToSave);
-    //         console.log('---> checkIncome result ', result);
-    //         if (result) {
-    //             return result;
-    //         }
-    //     }
-    // }
-
-    @Get(':userId')
-    getCategoriesByUserId(@Param('userId') userId): Promise<Category[]> {
-        return this.categoryService.getExpenseCategoriesByUserId(userId);
-    }
-
-    //   @Get()
-    //   getExpences(): Promise<Expence[]> {
-    //     return this.expenceService.getExpences();
-    //   }
-
-    //   @Get(':category')
-    //   getExpenceByCategory(@Param('category') category): Promise<Expence[]> {
-    //     return this.expenceService.getExpenceByCategory(category);
-    //   }
-
-    //   @Post()
-    //   async createNewExpence(@Body() newExpence: NewExpence): Promise<Expence[]> {
-    //     const expenceToSave = newExpence;
-    //     expenceToSave.id = this.appService.getId();
-    //     expenceToSave.date = this.appService.parseDate(newExpence.dateToParse);
-    //     const result: Expence[] = await this.expenceService.saveNewExpence(expenceToSave);
-    //     if (!result) {
-    //       console.log('Error');
-    //     }
-    //     return result;
-    //   }
 }

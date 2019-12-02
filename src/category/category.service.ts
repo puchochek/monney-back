@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '../db/entities/category.entity';
 import { TransactionCategory } from './category.dto';
-// import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from '../app.service';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,10 +15,6 @@ export class CategoryService {
         private readonly categoryRepository: Repository<Category>,
         private appService: AppService
     ) { }
-
-    // async getExpences(): Promise<Category[]> {
-    //     return await this.expenceRepository.find();
-    // }
 
     async upsertExpenseCategory(categoriesToUpsert: Category[]): Promise<Category[]> {
         const userId = categoriesToUpsert[0].user;
@@ -99,38 +94,16 @@ export class CategoryService {
             .where("category.user = :userId AND category.isIncome = true", { userId: userId })
             .getOne();
         console.log('---> incomeCategory ', incomeCategory);
-        //const isIncomeExist = incomeCategory ? true: false;
         return incomeCategory;
     }
 
-    // async createIncomeCategory(userId: string): Promise<Category> {
-    //     const incomeCategoryToSave = new Category;
-    //         incomeCategoryToSave.id = this.appService.getId();
-    //         incomeCategoryToSave.name = `income`;
-    //         incomeCategoryToSave.description = `The category keeps users' incomes data`;
-    //         incomeCategoryToSave.user = userId;
-    //         incomeCategoryToSave.isActive = true;
-    //         incomeCategoryToSave.isIncome = true;
-    //     return await this.categoryRepository.save(incomeCategoryToSave);
-    // }
-
-    async getCategoryById(categoryId: string): Promise<Category> {
+    async getCategoryByName(categoryName: string): Promise<Category> {
         const category = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
-            .where("category.id = :categoryId", { categoryId: categoryId })
+            .where("category.name = :categoryName", { categoryName: categoryName })
             .getOne();
-        console.log('---> category ', category);
+        console.log('---> category by name ', category);
         return category;
-
     }
-
-    //   async getExpenceByCategory(category: string) {
-    //     const expence = await getRepository(Category)
-    //       .createQueryBuilder('Expence')
-    //       .where('Expence.type = :type', { type: category })
-    //       .getMany();
-
-    //     return expence;
-    //   }
 }
