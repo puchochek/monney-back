@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { EmailService } from '../services/email.service';
 import { User } from './user.dto';
 import { USER_FIELDS } from '../db/scopes/AppUser';
+import { JwtService } from '../services/jwt.service';
 
 const saltRounds = 10;
 
@@ -14,6 +15,7 @@ export class UserService {
 	constructor(
 		@InjectRepository(AppUser) private readonly userRepository: Repository<AppUser>,
 		private emailService: EmailService,
+		private jwtService: JwtService,
 	) { }
 
 	hashPassword(password: string): string {
@@ -50,8 +52,9 @@ export class UserService {
 		return createdUser;
 	}
 
-	async getUserById(userId: string): Promise<AppUser> {
-
+	async getUserByToken(token: string): Promise<AppUser> {
+		console.log('---> getUserByToken', token );
+		const userId = this.jwtService.decodeJwt(token).data;
 		return await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)

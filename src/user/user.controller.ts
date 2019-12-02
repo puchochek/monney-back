@@ -76,11 +76,11 @@ export class UserController {
 		return this.userService.getUserByEmail(user);
 	}
 
-	@Get('user-by-id/:id')
+	@Get('user-by-token/:token')
 	@UseGuards(AuthGuard)
-	getUserById(@Param('id') id: string): Promise<AppUser> {
-		console.log('---> getUserById ', id);
-		return this.userService.getUserById(id);
+	getUserByToken(@Param('token') token: string): Promise<AppUser> {
+		console.log('---> getUserByToken ', token);
+		return this.userService.getUserByToken(token);
 	}
 
 	/* Returns nothing but set appropriate header*/

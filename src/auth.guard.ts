@@ -22,7 +22,6 @@ export class AuthGuard implements CanActivate {
     }
 
     validateRequest(request: any): boolean {
-        //console.log('---> validateRequest ', request);
         const tokenHttp =
             request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1];
         console.log('---> validateRequest tokenHttp ', tokenHttp);
@@ -31,15 +30,7 @@ export class AuthGuard implements CanActivate {
             return false;
         }
 
-        const userId = this.jwtService.decodeJwt(tokenHttp).data;
-        console.log('---> validateRequest userId ', userId);
-
-        if (!userId) {
-            console.log('---> no userId return');
-            return false;
-        }
-
-        this.userService.getUserById(userId).then(user => {
+        this.userService.getUserByToken(tokenHttp).then(user => {
             if (!user) {
                 console.log('---> no user return');
                 return false;
