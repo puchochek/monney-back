@@ -4,4 +4,6 @@ export class User {
   name: string;
   email: string;
   isConfirmed: boolean;
+  theme: string;
+  balanceEdge: number;
 }

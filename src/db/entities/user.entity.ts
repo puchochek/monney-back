@@ -44,6 +44,12 @@ export class AppUser {
 	@Column({ nullable: true })
 	public avatar: string;
 
+	@Column({ nullable: true })
+	public theme: string;
+
+	@Column({ nullable: true, type: "float" })
+    public balanceEdge: number;
+
 	@CreateDateColumn({ name: 'created_at' })
 	public createdAt: Date;
 

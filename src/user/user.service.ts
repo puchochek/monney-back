@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from '../services/email.service';
 import { User } from './user.dto';
-import { USER_FIELDS } from '../db/scopes/AppUser';
+import { USER_FIELDS } from '../db/scopes/User';
 import { JwtService } from '../services/jwt.service';
 
 const saltRounds = 10;

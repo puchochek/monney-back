@@ -7,6 +7,8 @@ import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { Connection } from 'typeorm';
 import { AuthGuard } from '../auth.guard';
+import { USER_FIELDS } from '../db/scopes/User';
+
 // import * as dotenv from 'dotenv';
 
 @Controller('user')
@@ -22,13 +24,6 @@ export class UserController {
 	@Post('token')
 	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
 		const userId = this.jwtService.decodeJwt(token).data;
-		const USER_FIELDS = [
-			'app_user.id',
-			'app_user.name',
-			'app_user.email',
-			'app_user.password',
-			'app_user.isConfirmed',
-		];
 
 		const result = await this.connection
 			.getRepository(AppUser)
@@ -56,7 +51,9 @@ export class UserController {
 		userToSave.name = this.userService.validateUserName(user.name);
 		userToSave.email = this.userService.validateEmail(user.email);
 		userToSave.password = this.userService.hashPassword(user.password);
+		userToSave.theme = user.theme;
 		userToSave.isConfirmed = false;
+		userToSave.balanceEdge = 0;
 
 		let result: AppUser[];
 		try {
