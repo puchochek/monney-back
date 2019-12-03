@@ -3,12 +3,15 @@ import { Transaction } from '../db/entities/transaction.entity';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CategoryService } from '../category/category.service'
+
 
 @Injectable()
 export class TransactionService {
 	constructor(
 		@InjectRepository(Transaction)
 		private readonly expenceRepository: Repository<Transaction>,
+		private categoryService: CategoryService,
 	) { }
 
 	async getTransactions(): Promise<Transaction[]> {
@@ -17,7 +20,15 @@ export class TransactionService {
 
 	async saveNewExpence(newExpences: Transaction[]): Promise<Transaction[]> {
 		console.log('---> EXP SERVICE newExpence ', newExpences);
-		return await this.expenceRepository.save(newExpences);
+		const transactionsToSave = []
+		for (let i = 0; i< newExpences.length; i++) {
+			const category = await this.categoryService.getCategoryByName(newExpences[i].category);
+			const transactionToSave = {...newExpences[i]};
+			transactionToSave.category = category.id;
+			transactionsToSave.push(transactionToSave);
+		}
+
+		return await this.expenceRepository.save(transactionsToSave);
 	}
 
 	async getTransactionsByCategory(category: string) {
