@@ -26,6 +26,7 @@ export class TransactionController {
 
     @Post('create')
     async createNewTransaction(@Body() newExpences: any): Promise<Transaction[]> {
+        console.log('---> newExpences ', newExpences);
         let expencesToSave: Transaction[] = [];
         newExpences.transactionsToUpsert.forEach(newExpence => {
             const expenceToSave = new Transaction;
@@ -38,7 +39,7 @@ export class TransactionController {
             expenceToSave.category = newExpence.category;
             expencesToSave.push(expenceToSave);
         });
-
+console.log('---> expencesToSave ', expencesToSave);
         const result: Transaction[] = await this.transactionService.saveNewExpence(expencesToSave);
         if (!result) {
             console.log('Error');

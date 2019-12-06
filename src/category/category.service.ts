@@ -16,7 +16,7 @@ export class CategoryService {
         private appService: AppService
     ) { }
 
-    async upsertExpenseCategory(categoriesToUpsert: Category[]): Promise<Category[]> {
+    async upsertCategory(categoriesToUpsert: Category[]): Promise<Category[]> {
         const userId = categoriesToUpsert[0].user;
         const userCategories = await this.getExpenseCategoriesByUserId(userId);
         categoriesToUpsert.forEach(categoryToUpsert => {

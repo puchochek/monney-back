@@ -5,11 +5,10 @@ import { AppUser } from '../db/entities/user.entity';
 import { User } from './user.dto';
 import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
-import { Connection } from 'typeorm';
 import { AuthGuard } from '../auth.guard';
-import { USER_FIELDS } from '../db/scopes/User';
+import { Category } from '../db/entities/category.entity';
+import { CategoryService } from 'src/category/category.service';
 
-// import * as dotenv from 'dotenv';
 
 @Controller('user')
 export class UserController {
@@ -17,28 +16,32 @@ export class UserController {
 	constructor(
 		private userService: UserService,
 		private appService: AppService,
-		private jwtService: JwtService,
-		private readonly connection: Connection,
+		private categoryService: CategoryService,
 	) { }
 
 	@Post('token')
-	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
-		const userId = this.jwtService.decodeJwt(token).data;
-
-		const result = await this.connection
-			.getRepository(AppUser)
-			.createQueryBuilder('app_user')
-			.select(USER_FIELDS)
-			.where({ id: userId })
-			.getOne();
-		if (result) {
-			const userToUpdate = result;
+	async activateUser(@Body() { token }: { token: string }): Promise<AppUser[]> {
+		const userToActivate = await this.userService.getUnconfirmedUserByToken(token);
+		console.log('---> activateUser ', userToActivate);
+		if (userToActivate) {
+			const userToUpdate = {...userToActivate};
 			userToUpdate.isConfirmed = true;
-
-			const updatedUser = await this.connection
-				.getRepository(AppUser)
-				.save(userToUpdate);
-			return updatedUser;
+			const incomeCategory: Category = {
+				id: this.appService.getId(),
+				isIncome: true,
+				categoryIndex: null,
+				description: `Keeps your incomes data.`,
+				name: `Income`,
+				user: userToActivate.id,
+				isActive: true,
+				icon: null,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				transactions: []
+			}
+			const userToUpdateIncome = await this.categoryService.upsertCategory([incomeCategory]);
+			userToUpdate.categories = [userToUpdateIncome[0]];
+			return this.userService.updateUser([userToUpdate]);
 		}
 		// TODO What do I have to return in case of fail?
 		//console.log('---> result AUTHORIZED ', result);

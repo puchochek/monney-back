@@ -7,6 +7,7 @@ import { EmailService } from '../services/email.service';
 import { User } from './user.dto';
 import { USER_FIELDS } from '../db/scopes/User';
 import { JwtService } from '../services/jwt.service';
+import { Category } from 'src/db/entities/category.entity';
 
 const saltRounds = 10;
 
@@ -72,6 +73,7 @@ export class UserService {
 			.leftJoinAndSelect("app_user.transactions", "transaction")
 			.where("app_user.email = :email AND app_user.isConfirmed = true", { email: user.email })
 			.getOne();
+			console.log('---> getUserByEmail ', userByEmail);
 		if (this.comparePasswords(user.password, userByEmail.password)) {
 			return userByEmail;
 		}
@@ -79,13 +81,19 @@ export class UserService {
 		return null;
 	}
 
+	async getUnconfirmedUserByToken(token: string): Promise<AppUser> {
+		const userId = this.jwtService.decodeJwt(token).data;
+		return await this.userRepository
+			.createQueryBuilder('app_user')
+			.select(USER_FIELDS)
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+			.leftJoinAndSelect("app_user.transactions", "transaction", "transaction.isDeleted = false")
+			.where("app_user.id = :id", { id: userId })
+			.getOne();
+	}
+
 	async updateUser(user: User[]): Promise<AppUser[]> {
 
 		return await this.userRepository.save(user);
 	}
-
-	// async getUsers(): Promise<AppUser[]> {
-	// 	return await this.userRepository.find();
-	// }
-
 }

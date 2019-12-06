@@ -15,6 +15,7 @@ import { Category } from '../db/entities/category.entity';
 		ServicesModule,
 	],
   controllers: [CategoryController],
-  providers: [CategoryService, AppService]
+  providers: [CategoryService, AppService],
+  exports: [CategoryService]
 })
 export class CategoryModule {}

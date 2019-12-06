@@ -19,7 +19,6 @@ export class CategoryController {
             categoryToSave.id = categoryToUpsert.id ?
                 categoryToUpsert.id
                 : this.appService.getId();
-            categoryToUpsert.name = categoryToUpsert.name;
             categoryToSave.description = categoryToUpsert.description;
             categoryToSave.user = categoryToUpsert.user;
             categoryToSave.name = categoryToUpsert.name;
@@ -29,8 +28,7 @@ export class CategoryController {
             categoryToSave.icon = categoryToUpsert.icon;
             categories.push(categoryToSave);
         });
-
-        const result: Category[] = await this.categoryService.upsertExpenseCategory(categories);
+        const result: Category[] = await this.categoryService.upsertCategory(categories);
         if (!result) {
             console.log('Error');
         }
