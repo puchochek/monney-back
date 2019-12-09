@@ -3,12 +3,16 @@ import { AppService } from '../app.service';
 import { CategoryService } from './category.service';
 import { Category } from '../db/entities/category.entity';
 import { TransactionCategory } from './category.dto';
+import { Request } from 'express';
+import { JwtService } from '../services/jwt.service';
+
 
 @Controller('category')
 export class CategoryController {
     constructor(
         private appService: AppService,
         private categoryService: CategoryService,
+        private jwtService: JwtService,
     ) { }
 
     @Post('upsert')
@@ -47,9 +51,17 @@ export class CategoryController {
     }
 
     @Get(':categoryName')
-    getCategoryByName(@Param('categoryName') categoryName): Promise<Category> {
+    getCategoryByName(@Param('categoryName') categoryName, @Req() request: Request): Promise<Category> {
+        let token: string;
+        let userId: string;
+        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+        }
+        if (token) {
+            userId = this.jwtService.verifyJwt(token).data;
+        }
 
-        return this.categoryService.getCategoryByName(categoryName);
+        return this.categoryService.getCategoryByName(categoryName, userId);
     }
 
 }

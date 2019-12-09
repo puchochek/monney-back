@@ -7,13 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CATEGORY_FIELDS } from '../db/scopes/Category';
 
-
 @Injectable()
 export class CategoryService {
     constructor(
         @InjectRepository(Category)
         private readonly categoryRepository: Repository<Category>,
-        private appService: AppService
+        private appService: AppService,
     ) { }
 
     async upsertCategory(categoriesToUpsert: Category[]): Promise<Category[]> {
@@ -97,11 +96,11 @@ export class CategoryService {
         return incomeCategory;
     }
 
-    async getCategoryByName(categoryName: string): Promise<Category> {
+    async getCategoryByName(categoryName: string, userId: string): Promise<Category> {
         const category = await this.categoryRepository
             .createQueryBuilder('category')
             .select(CATEGORY_FIELDS)
-            .where("category.name = :categoryName", { categoryName: categoryName })
+            .where("category.name = :categoryName AND category.user = :userId", { categoryName: categoryName, userId: userId })
             .getOne();
         console.log('---> category by name ', category);
         return category;

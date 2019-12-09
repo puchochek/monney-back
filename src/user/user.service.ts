@@ -41,6 +41,7 @@ export class UserService {
 
 	async saveNewUser(user: any): Promise<AppUser[]> {
 		const createdUser = await this.userRepository.save(user);
+		console.log('---> createdUser ', createdUser);
 		let emailToSendAuth: string;
 		let userId: string;
 

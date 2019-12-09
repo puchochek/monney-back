@@ -26,29 +26,14 @@ export class UserController {
 		if (userToActivate) {
 			const userToUpdate = {...userToActivate};
 			userToUpdate.isConfirmed = true;
-			const incomeCategory: Category = {
-				id: this.appService.getId(),
-				isIncome: true,
-				categoryIndex: null,
-				description: `Keeps your incomes data.`,
-				name: `Income`,
-				user: userToActivate.id,
-				isActive: true,
-				icon: null,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				transactions: []
-			}
-			const userToUpdateIncome = await this.categoryService.upsertCategory([incomeCategory]);
-			userToUpdate.categories = [userToUpdateIncome[0]];
 			return this.userService.updateUser([userToUpdate]);
 		}
 		// TODO What do I have to return in case of fail?
-		//console.log('---> result AUTHORIZED ', result);
 	}
 
 	@Post('register')
 	async hashPassword(@Body() user: User): Promise<AppUser[]> {
+		console.log('---> register user ', user);
 		const userToSave = user;
 		userToSave.id = this.appService.getId();
 		userToSave.name = this.userService.validateUserName(user.name);

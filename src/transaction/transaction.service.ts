@@ -22,7 +22,7 @@ export class TransactionService {
 		console.log('---> EXP SERVICE newExpence ', newExpences);
 		const transactionsToSave = []
 		for (let i = 0; i< newExpences.length; i++) {
-			const category = await this.categoryService.getCategoryByName(newExpences[i].category);
+			const category = await this.categoryService.getCategoryByName(newExpences[i].category, newExpences[i].user);
 			const transactionToSave = {...newExpences[i]};
 			transactionToSave.category = category.id;
 			transactionsToSave.push(transactionToSave);
