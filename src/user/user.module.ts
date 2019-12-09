@@ -7,7 +7,6 @@ import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { DbModule } from '../db/db.module';
 import { ServicesModule } from '../services/services.module';
-import { CategoryModule } from 'src/category/category.module';
 
 @Module({
 	imports: [
@@ -15,7 +14,6 @@ import { CategoryModule } from 'src/category/category.module';
 		TypeOrmModule.forFeature([AppUser]),
 		DbModule,
 		ServicesModule,
-		CategoryModule
 	],
 	controllers: [UserController],
 	providers: [UserService, AppService],

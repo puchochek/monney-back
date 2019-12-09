@@ -7,8 +7,6 @@ import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { AuthGuard } from '../auth.guard';
 import { Category } from '../db/entities/category.entity';
-import { CategoryService } from 'src/category/category.service';
-
 
 @Controller('user')
 export class UserController {
@@ -16,7 +14,6 @@ export class UserController {
 	constructor(
 		private userService: UserService,
 		private appService: AppService,
-		private categoryService: CategoryService,
 	) { }
 
 	@Post('token')
