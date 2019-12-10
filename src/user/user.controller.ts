@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, Res, UseGuards, Patch } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { UserService } from './user.service';
 import { AppUser } from '../db/entities/user.entity';
@@ -19,20 +19,29 @@ export class UserController {
 		private jwtService: JwtService,
 	) { }
 
-	@Post('token')
-	async activateUser(@Body() { token }: { token: string }): Promise<AppUser[]> {
-		const userToActivate = await this.userService.getUnconfirmedUserByToken(token);
-		console.log('---> activateUser ', userToActivate);
-		if (userToActivate) {
-			const userToUpdate = {...userToActivate};
-			userToUpdate.isConfirmed = true;
-			return this.userService.updateUser([userToUpdate]);
+	@Get('user-by-token')
+	@UseGuards(AuthGuard)
+	getUserByToken(@Req() request: Request): Promise<AppUser> {
+		let token: string;
+		let userId: string;
+		if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+			token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
 		}
-		// TODO What do I have to return in case of fail?
+		if (token) {
+			userId = this.jwtService.verifyJwt(token).data;
+		}
+		console.log('---> getUserByToken ', token);
+		return this.userService.getUserByToken(token);
 	}
 
-	@Post('register')
-	async hashPassword(@Body() user: User): Promise<AppUser[]> {
+	/* Returns nothing but set appropriate header*/
+	@Get('user-token/:userId')
+	getActivatedUserToken(@Param('userId') userId: string) {
+		console.log('---> user-token userId ', userId);
+	}
+
+	@Post()
+	async registerUser(@Body() user: User): Promise<AppUser[]> {
 		console.log('---> register user ', user);
 		const userToSave = user;
 		userToSave.id = this.appService.getId();
@@ -45,12 +54,12 @@ export class UserController {
 
 		let result: AppUser[];
 		try {
-			result = await this.userService.saveNewUser(userToSave);
+			result = await this.userService.createNewUser(userToSave);
 		} catch {
 			console.log('no result');
 			throw new LoginUserError('Oops. Something is wrong. Please, try again.');
 		}
-		console.log('---> result REGISTRED', result);
+		console.log('---> user REGISTRED', result);
 
 		return result;
 	}
@@ -61,25 +70,14 @@ export class UserController {
 		return this.userService.getUserByEmail(user);
 	}
 
-	@Get('user-by-token')
-	@UseGuards(AuthGuard)
-	getUserByToken(@Req() request: Request): Promise<AppUser> {
-		let token: string;
-        let userId: string;
-        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
-            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
-        }
-        if (token) {
-            userId = this.jwtService.verifyJwt(token).data;
-        }
-		console.log('---> getUserByToken ', token);
-		return this.userService.getUserByToken(token);
-	}
-
-	/* Returns nothing but set appropriate header*/
-	@Get('user-token/:userId')
-	getActivatedUserToken(@Param('userId') userId: string) {
-		console.log('---> user-token userId ', userId);
+	@Post('token')
+	async activateUser(@Body() { token }: { token: string }): Promise<AppUser[]> {
+		const userToActivate = await this.userService.getUnconfirmedUserByToken(token);
+		if (userToActivate) {
+			const userToUpdate = { ...userToActivate };
+			userToUpdate.isConfirmed = true;
+			return this.userService.updateUser([userToUpdate]);
+		}
 	}
 
 	@Post('avatar/:id')
@@ -127,10 +125,10 @@ export class UserController {
 		})
 	}
 
-	@Post('update')
-	async updateUser(@Req() req,
-		@Body() user: any): Promise<AppUser[]> {
-		return this.userService.updateUser(user.user);
-	}
+	@Patch()
+	async updateUser(@Req() request,
+		@Body() userToUpdate: any): Promise<AppUser[]> {
 
+		return await this.userService.updateUser(userToUpdate);
+	}
 }

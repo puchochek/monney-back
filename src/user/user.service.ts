@@ -39,7 +39,7 @@ export class UserService {
 		return expression.test(String(email).toLowerCase()) ? email : 'Error';
 	}
 
-	async saveNewUser(user: any): Promise<AppUser[]> {
+	async createNewUser(user: any): Promise<AppUser[]> {
 		const createdUser = await this.userRepository.save(user);
 		console.log('---> createdUser ', createdUser);
 		let emailToSendAuth: string;
@@ -70,7 +70,7 @@ export class UserService {
 		const userByEmail = await this.userRepository
 			.createQueryBuilder('app_user')
 			.select(USER_FIELDS)
-			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true AND category.isIncome = false")
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
 			.leftJoinAndSelect("app_user.transactions", "transaction")
 			.where("app_user.email = :email AND app_user.isConfirmed = true", { email: user.email })
 			.getOne();
