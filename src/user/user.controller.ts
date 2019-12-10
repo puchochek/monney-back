@@ -7,6 +7,8 @@ import { LoginUserError } from '../errors/login-user';
 import { JwtService } from '../services/jwt.service';
 import { AuthGuard } from '../auth.guard';
 import { Category } from '../db/entities/category.entity';
+import { Request } from 'express';
+//import { JwtService } from '../services/jwt.service';
 
 @Controller('user')
 export class UserController {
@@ -14,6 +16,7 @@ export class UserController {
 	constructor(
 		private userService: UserService,
 		private appService: AppService,
+		private jwtService: JwtService,
 	) { }
 
 	@Post('token')
@@ -58,9 +61,17 @@ export class UserController {
 		return this.userService.getUserByEmail(user);
 	}
 
-	@Get('user-by-token/:token')
+	@Get('user-by-token')
 	@UseGuards(AuthGuard)
-	getUserByToken(@Param('token') token: string): Promise<AppUser> {
+	getUserByToken(@Req() request: Request): Promise<AppUser> {
+		let token: string;
+        let userId: string;
+        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+        }
+        if (token) {
+            userId = this.jwtService.verifyJwt(token).data;
+        }
 		console.log('---> getUserByToken ', token);
 		return this.userService.getUserByToken(token);
 	}
