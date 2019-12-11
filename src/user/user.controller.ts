@@ -71,12 +71,12 @@ export class UserController {
 	}
 
 	@Post('token')
-	async activateUser(@Body() { token }: { token: string }): Promise<AppUser[]> {
+	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
 		const userToActivate = await this.userService.getUnconfirmedUserByToken(token);
 		if (userToActivate) {
 			const userToUpdate = { ...userToActivate };
 			userToUpdate.isConfirmed = true;
-			return this.userService.updateUser([userToUpdate]);
+			return this.userService.updateUser(userToUpdate);
 		}
 	}
 
@@ -127,8 +127,8 @@ export class UserController {
 
 	@Patch()
 	async updateUser(@Req() request,
-		@Body() userToUpdate: any): Promise<AppUser[]> {
-
+		@Body() userToUpdate: any): Promise<AppUser> {
+		console.log('---> userToUpdate ', userToUpdate);
 		return await this.userService.updateUser(userToUpdate);
 	}
 }

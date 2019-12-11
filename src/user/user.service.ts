@@ -93,7 +93,7 @@ export class UserService {
 			.getOne();
 	}
 
-	async updateUser(user: User[]): Promise<AppUser[]> {
+	async updateUser(user: any): Promise<AppUser> {
 
 		return await this.userRepository.save(user);
 	}
