@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { CategoryService } from './category.service';
 import { Category } from '../db/entities/category.entity';
@@ -15,21 +15,38 @@ export class CategoryController {
         private jwtService: JwtService,
     ) { }
 
-    @Post('upsert')
-    async upsertCategory(@Body() categoriesToUpsert: any): Promise<Category[]> {
-        let categories: Category[] = [];
-        categoriesToUpsert.categoriesToUpsert.forEach(categoryToUpsert => {
+    @Post()
+    async createCategory(@Body() categoryToCreate: any): Promise<Category[]> {
+        const categoryToSave = new Category;
+        categoryToSave.id = this.appService.getId();
+        categoryToSave.description = categoryToCreate.description;
+        categoryToSave.user = categoryToCreate.user;
+        categoryToSave.name = categoryToCreate.name;
+        categoryToSave.isActive = true;
+        categoryToSave.isIncome = categoryToCreate.isIncome;
+        categoryToSave.categoryIndex = isNaN(categoryToCreate.categoryIndex) ? -1 : categoryToCreate.categoryIndex;
+        categoryToSave.icon = categoryToCreate.icon;
+        const result: Category[] = await this.categoryService.upsertCategory([categoryToSave]);
+        if (!result) {
+            console.log('Error');
+        }
+
+        return result;
+    }
+
+    @Patch()
+    async updateCategory(@Body() categoriesToUpdate: any): Promise<Category[]> {
+        const categories: Category[] = [];
+        categoriesToUpdate.forEach(categoryToCreate => {
             const categoryToSave = new Category;
-            categoryToSave.id = categoryToUpsert.id ?
-                categoryToUpsert.id
-                : this.appService.getId();
-            categoryToSave.description = categoryToUpsert.description;
-            categoryToSave.user = categoryToUpsert.user;
-            categoryToSave.name = categoryToUpsert.name;
-            categoryToSave.isActive = categoryToUpsert.isActive;
-            categoryToSave.isIncome = categoryToUpsert.isIncome;
-            categoryToSave.categoryIndex = isNaN(categoryToUpsert.categoryIndex) ? -1 : categoryToUpsert.categoryIndex;
-            categoryToSave.icon = categoryToUpsert.icon;
+            categoryToSave.id = categoryToCreate.id;
+            categoryToSave.description = categoryToCreate.description;
+            categoryToSave.user = categoryToCreate.user;
+            categoryToSave.name = categoryToCreate.name;
+            categoryToSave.isActive = true;
+            categoryToSave.isIncome = categoryToCreate.isIncome;
+            categoryToSave.categoryIndex = isNaN(categoryToCreate.categoryIndex) ? -1 : categoryToCreate.categoryIndex;
+            categoryToSave.icon = categoryToCreate.icon;
             categories.push(categoryToSave);
         });
         const result: Category[] = await this.categoryService.upsertCategory(categories);
@@ -40,9 +57,20 @@ export class CategoryController {
         return result;
     }
 
-    @Post('reorder')
-    async reorderCategories(@Body() categoryData: any): Promise<Category[]> {
-        const result: Category[] = await this.categoryService.reorderCategories(categoryData.userId, categoryData.draggedItemIndex, categoryData.targetItemIndex);
+    @Delete(`:categoryName`)
+    async deleteCategory(@Param('categoryName') categoryName, @Req() request: Request): Promise<Category[]> {
+        let token: string;
+        let userId: string;
+        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+        }
+        if (token) {
+            userId = this.jwtService.verifyJwt(token).data;
+        }
+        const categoryToDelete = await this.categoryService.getCategoryByName(categoryName, userId);
+        categoryToDelete.isActive = false;
+
+        const result: Category[] = await this.categoryService.upsertCategory([categoryToDelete]);
         if (!result) {
             console.log('Error');
         }
