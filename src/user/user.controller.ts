@@ -19,7 +19,7 @@ export class UserController {
 		private jwtService: JwtService,
 	) { }
 
-	@Get('user-by-token')
+	@Get('token')
 	@UseGuards(AuthGuard)
 	getUserByToken(@Req() request: Request): Promise<AppUser> {
 		let token: string;
@@ -34,14 +34,8 @@ export class UserController {
 		return this.userService.getUserByToken(token);
 	}
 
-	/* Returns nothing but set appropriate header*/
-	@Get('user-token/:userId')
-	getActivatedUserToken(@Param('userId') userId: string) {
-		console.log('---> user-token userId ', userId);
-	}
-
 	@Post()
-	async registerUser(@Body() user: User): Promise<AppUser[]> {
+	async registerUser(@Body() user: User): Promise<AppUser> {
 		console.log('---> register user ', user);
 		const userToSave = user;
 		userToSave.id = this.appService.getId();
@@ -52,9 +46,11 @@ export class UserController {
 		userToSave.isConfirmed = false;
 		userToSave.balanceEdge = 0;
 
-		let result: AppUser[];
+		let result: AppUser;
 		try {
 			result = await this.userService.createNewUser(userToSave);
+			const token = this.jwtService.generateToken(result.id, `2 hours`);
+			result.temporaryToken = `Bearer ${token}`;
 		} catch {
 			console.log('no result');
 			throw new LoginUserError('Oops. Something is wrong. Please, try again.');
@@ -64,13 +60,7 @@ export class UserController {
 		return result;
 	}
 
-	@Post('autorize')
-	async autorizeUser(@Req() req,
-		@Body() user: User): Promise<AppUser> {
-		return this.userService.getUserByEmail(user);
-	}
-
-	@Post('token')
+	@Post('activate')
 	async activateUser(@Body() { token }: { token: string }): Promise<AppUser> {
 		const userToActivate = await this.userService.getUnconfirmedUserByToken(token);
 		if (userToActivate) {
@@ -78,6 +68,15 @@ export class UserController {
 			userToUpdate.isConfirmed = true;
 			return this.userService.updateUser(userToUpdate);
 		}
+	}
+
+	@Post('autorize')
+	async autorizeUser(@Req() req,
+		@Body() user: User): Promise<AppUser> {
+			const authorisedUser = await this.userService.getUserByEmail(user);
+			const token = this.jwtService.generateToken(authorisedUser.id, `7 days`);
+			authorisedUser.temporaryToken = `Bearer ${token}`;
+		return authorisedUser;
 	}
 
 	@Post('avatar/:id')

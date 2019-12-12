@@ -14,12 +14,7 @@ export class TransactionService {
 		private categoryService: CategoryService,
 	) { }
 
-	// async getTransactions(): Promise<Transaction[]> {
-	// 	return await this.expenceRepository.find();
-	// }
-
 	async saveTransaction(newExpence: Transaction): Promise<Transaction> {
-		console.log('---> saveNewExpence ', newExpence);
 		const transactionsToSave = []
 			const category = await this.categoryService.getCategoryByName(newExpence.category, newExpence.user);
 			const transactionToSave = {...newExpence};

@@ -39,7 +39,7 @@ export class UserService {
 		return expression.test(String(email).toLowerCase()) ? email : 'Error';
 	}
 
-	async createNewUser(user: any): Promise<AppUser[]> {
+	async createNewUser(user: any): Promise<AppUser> {
 		const createdUser = await this.userRepository.save(user);
 		console.log('---> createdUser ', createdUser);
 		let emailToSendAuth: string;

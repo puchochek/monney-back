@@ -1,29 +1,22 @@
 import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
-// import { AppUser } from './db/entities/user.entity';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-import { UserService } from './user/user.service';
-
 import { JwtService } from './services/jwt.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
     constructor(
-        // @InjectRepository(AppUser) private readonly userRepository: Repository<AppUser>,
-        private userService: UserService,
         private jwtService: JwtService
     ) { }
 
     resolve(...args: any[]): MiddlewareFunction {
         return (req, res, next) => {
-            let oldToken;
-            let userId;
-            let newToken;
+            let oldToken: string;
+            let userId: string;
+            let newToken: string;
             const expiresIn = '7 days';
 
             console.log('---> req.baseUrl ', req.baseUrl);
 
-            if (req.baseUrl === '/user/token') {
+            if (req.baseUrl === '/user/activate') {
                 userId = this.jwtService.verifyJwt(req.body.token).data;
                 newToken = this.jwtService.generateToken(userId, expiresIn);
 
@@ -38,18 +31,15 @@ export class JwtMiddleware implements NestMiddleware {
 
                 res.set('Access-Control-Expose-Headers', 'Authorization');
                 res.set('Authorization', `Bearer ${newToken}`);
-
                 return next();
             }
 
             if (req.baseUrl.includes(`/user/avatar`)) {
                 const urlId = req.baseUrl.substring(13);
-                console.log('---> urlId SBSTR ', urlId);
                 newToken = this.jwtService.generateToken(urlId, expiresIn);
 
                 res.set('Access-Control-Expose-Headers', 'Authorization');
                 res.set('Authorization', `Bearer ${newToken}`);
-
                 return next();
             }
 
@@ -63,11 +53,8 @@ export class JwtMiddleware implements NestMiddleware {
             userId = this.jwtService.verifyJwt(oldToken).data;
             newToken = this.jwtService.generateToken(userId, expiresIn);
 
-            //res.set('Content-Type', 'application/json');
-
             res.set('Access-Control-Expose-Headers', 'Authorization');
             res.set('Authorization', `Bearer ${newToken}`);
-            //console.log('---> res ', res);
             next();
         };
     }

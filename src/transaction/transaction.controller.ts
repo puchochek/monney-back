@@ -16,16 +16,6 @@ export class TransactionController {
         private categoryService: CategoryService,
     ) { }
 
-    // @Get()
-    // getTransactions(): Promise<Transaction[]> {
-    //     return this.transactionService.getTransactions();
-    // }
-
-    @Get(':category')
-    getExpenceByCategory(@Param('category') category): Promise<Transaction[]> {
-        return this.transactionService.getTransactionsByCategory(category);
-    }
-
     @Post()
     async createTransaction(@Body() newExpence: any): Promise<Transaction> {
         const expenceToSave = new Transaction;
@@ -46,7 +36,6 @@ export class TransactionController {
 
     @Patch()
     async editTransaction(@Body() transactionToUpsert: any): Promise<Transaction> {
-        console.log('---> editTransaction ', transactionToUpsert);
         const result: Transaction = await this.transactionService.updateTransaction(transactionToUpsert);
         if (!result) {
             console.log('Error');
