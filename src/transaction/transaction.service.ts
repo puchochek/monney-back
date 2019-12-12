@@ -14,33 +14,40 @@ export class TransactionService {
 		private categoryService: CategoryService,
 	) { }
 
-	async getTransactions(): Promise<Transaction[]> {
-		return await this.expenceRepository.find();
-	}
+	// async getTransactions(): Promise<Transaction[]> {
+	// 	return await this.expenceRepository.find();
+	// }
 
-	async saveNewExpence(newExpences: Transaction[]): Promise<Transaction[]> {
-		console.log('---> EXP SERVICE newExpence ', newExpences);
+	async saveTransaction(newExpence: Transaction): Promise<Transaction> {
+		console.log('---> saveNewExpence ', newExpence);
 		const transactionsToSave = []
-		for (let i = 0; i< newExpences.length; i++) {
-			const category = await this.categoryService.getCategoryByName(newExpences[i].category, newExpences[i].user);
-			const transactionToSave = {...newExpences[i]};
+			const category = await this.categoryService.getCategoryByName(newExpence.category, newExpence.user);
+			const transactionToSave = {...newExpence};
 			transactionToSave.category = category.id;
 			transactionsToSave.push(transactionToSave);
-		}
 
-		return await this.expenceRepository.save(transactionsToSave);
+		return await this.expenceRepository.save(transactionToSave);
 	}
 
 	async getTransactionsByCategory(category: string) {
-		const expence = await getRepository(Transaction)
+		const transactions = await getRepository(Transaction)
 			.createQueryBuilder('transaction')
 			.where('transaction.category = :category', { category: category })
 			.getMany();
 
-		return expence;
+		return transactions;
 	}
 
-	async upsertTransaction(tarnsactionsToUpsert: Transaction[]): Promise<Transaction[]> {
-		return await this.expenceRepository.save(tarnsactionsToUpsert);
+	async getTransactionById(id: string) {
+		const transaction = await getRepository(Transaction)
+			.createQueryBuilder('transaction')
+			.where('transaction.id = :id', { id: id })
+			.getOne();
+
+		return transaction;
+	}
+
+	async updateTransaction(tarnsactionToUpsert: Transaction): Promise<Transaction> {
+		return await this.expenceRepository.save(tarnsactionToUpsert);
 	}
 }

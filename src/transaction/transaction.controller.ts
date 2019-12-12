@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { TransactionService } from './transaction.service';
 import { CategoryService } from '../category/category.service'
 import { Transaction } from '../db/entities/transaction.entity';
 import { Category } from '../db/entities/category.entity';
 import { IncomingTransaction } from './transaction.dto';
+import { Request } from 'express';
+
 
 @Controller('transaction')
 export class TransactionController {
@@ -14,47 +16,55 @@ export class TransactionController {
         private categoryService: CategoryService,
     ) { }
 
-    @Get()
-    getTransactions(): Promise<Transaction[]> {
-        return this.transactionService.getTransactions();
-    }
+    // @Get()
+    // getTransactions(): Promise<Transaction[]> {
+    //     return this.transactionService.getTransactions();
+    // }
 
     @Get(':category')
     getExpenceByCategory(@Param('category') category): Promise<Transaction[]> {
         return this.transactionService.getTransactionsByCategory(category);
     }
 
-    @Post('create')
-    async createNewTransaction(@Body() newExpences: any): Promise<Transaction[]> {
-        console.log('---> newExpences ', newExpences);
-        let expencesToSave: Transaction[] = [];
-        newExpences.transactionsToUpsert.forEach(newExpence => {
-            const expenceToSave = new Transaction;
-            expenceToSave.id = this.appService.getId();
-            expenceToSave.isDeleted = false;
-            expenceToSave.user = newExpence.userId;
-            expenceToSave.date = new Date(newExpence.date);
-            expenceToSave.sum = newExpence.sum;
-            expenceToSave.comment = newExpence.comment;
-            expenceToSave.category = newExpence.category;
-            expencesToSave.push(expenceToSave);
-        });
-console.log('---> expencesToSave ', expencesToSave);
-        const result: Transaction[] = await this.transactionService.saveNewExpence(expencesToSave);
+    @Post()
+    async createTransaction(@Body() newExpence: any): Promise<Transaction> {
+        const expenceToSave = new Transaction;
+        expenceToSave.id = this.appService.getId();
+        expenceToSave.isDeleted = false;
+        expenceToSave.user = newExpence.userId;
+        expenceToSave.date = new Date(newExpence.date);
+        expenceToSave.sum = newExpence.sum;
+        expenceToSave.comment = newExpence.comment;
+        expenceToSave.category = newExpence.category;
+
+        const result: Transaction = await this.transactionService.saveTransaction(expenceToSave);
         if (!result) {
             console.log('Error');
         }
         return result;
     }
 
-    @Post('edit')
-    async editTransaction(@Body() transactionsToUpsert: any): Promise<Transaction[]> {
-        console.log('---> editTransaction ', transactionsToUpsert.transactionsToUpsert);
-        const result: Transaction[] = await this.transactionService.upsertTransaction(transactionsToUpsert.transactionsToUpsert);
+    @Patch()
+    async editTransaction(@Body() transactionToUpsert: any): Promise<Transaction> {
+        console.log('---> editTransaction ', transactionToUpsert);
+        const result: Transaction = await this.transactionService.updateTransaction(transactionToUpsert);
         if (!result) {
             console.log('Error');
         }
-        return result;
 
+        return result;
+    }
+
+    @Delete(`:transactionId`)
+    async deleteTransaction(@Param('transactionId') transactionId, @Req() request: Request): Promise<Transaction> {
+        const transactionToDelete = await this.transactionService.getTransactionById(transactionId);
+        transactionToDelete.isDeleted = true;
+
+        const result: Transaction = await this.transactionService.updateTransaction(transactionToDelete);
+        if (!result) {
+            console.log('Error');
+        }
+
+        return result;
     }
 }
