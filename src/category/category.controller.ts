@@ -72,7 +72,7 @@ export class CategoryController {
             token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
         if (token) {
-            userId = this.jwtService.verifyJwt(token).data;
+            userId = this.jwtService.decodeJwt(token).data;
         }
         const categoryToDelete = await this.categoryService.getCategoryByName(categoryName, userId);
         categoryToDelete.isActive = false;
@@ -93,7 +93,7 @@ export class CategoryController {
             token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
         if (token) {
-            userId = this.jwtService.verifyJwt(token).data;
+            userId = this.jwtService.decodeJwt(token).data;
         }
 
         return this.categoryService.getCategoryByName(categoryName, userId);

@@ -28,17 +28,4 @@ export class JwtService {
 	//	console.log('----> jwtDecoded ', jwtDecoded);
 		return jwtDecoded;
 	}
-//TODO the same as decode
-	verifyJwt(token: string): any {
-	//	console.log('---> verifyJwt ', token);
-		const JWT_SECRET = process.env.JWT_SECRET;
-		// let decoded;
-		// try {
-		// 	decoded = jwt.verify(token, JWT_SECRET);
-		//   } catch(err) {
-		// 	decoded = err;
-		//   }
-		//   console.log('---> decoded ', decoded);
-		return jwt.verify(token, JWT_SECRET);
-	}
 }

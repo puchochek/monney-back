@@ -55,7 +55,6 @@ export class UserService {
 	}
 
 	async getUserByToken(token: string): Promise<AppUser> {
-		console.log('---> getUserByToken', token );
 		const userId = this.jwtService.decodeJwt(token).data;
 		return await this.userRepository
 			.createQueryBuilder('app_user')

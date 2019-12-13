@@ -9,6 +9,7 @@ import { AuthGuard } from '../auth.guard';
 import { Category } from '../db/entities/category.entity';
 import { Request } from 'express';
 import { AuthorizationException } from '../exceptions/authorization.exception';
+import { UserException } from '../exceptions/user.exception';
 //import { JwtService } from '../services/jwt.service';
 
 @Controller('user')
@@ -22,13 +23,21 @@ export class UserController {
 
 	@Get('token')
 	@UseGuards(AuthGuard)
-	getUserByToken(@Req() request: Request): Promise<AppUser> {
+	async getUserByToken(@Req() request: Request): Promise<AppUser> {
 		let token: string;
 		if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
 			token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
 		}
-		console.log('---> getUserByToken ', token);
-		return this.userService.getUserByToken(token);
+
+		let userByToken: AppUser;
+		try {
+			userByToken = await this.userService.getUserByToken(token);
+			console.log('---> userByToken ', userByToken);
+		} catch (error) {
+			console.log('get user error ', error);
+			throw new UserException(`${error}`);
+		}
+		return userByToken;
 	}
 
 	@Post()

@@ -49,9 +49,9 @@ export class AppUser {
 
 	@Column({ nullable: true, type: "float" })
 	public balanceEdge: number;
-	
+
 	@Column({ nullable: true })
-    public temporaryToken?: string;
+	public temporaryToken?: string;
 
 	@CreateDateColumn({ name: 'created_at' })
 	public createdAt: Date;

@@ -24,7 +24,6 @@ export class AuthGuard implements CanActivate {
     validateRequest(request: any): boolean {
         const tokenHttp =
             request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1];
-        console.log('---> validateRequest tokenHttp ', tokenHttp);
         if (!tokenHttp) {
             console.log('---> no token return');
             return false;
@@ -37,9 +36,7 @@ export class AuthGuard implements CanActivate {
             }
         });
 
-        const isTokenVerified = this.jwtService.verifyJwt(tokenHttp);
-        console.log('---> validateRequest isTokenVerified ', isTokenVerified);
-
+        const isTokenVerified = this.jwtService.decodeJwt(tokenHttp);
         return true;
     }
 }

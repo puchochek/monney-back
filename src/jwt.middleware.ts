@@ -17,7 +17,7 @@ export class JwtMiddleware implements NestMiddleware {
             console.log('---> req.baseUrl ', req.baseUrl);
 
             if (req.baseUrl === '/user/activate') {
-                userId = this.jwtService.verifyJwt(req.body.token).data;
+                userId = this.jwtService.decodeJwt(req.body.token).data;
                 newToken = this.jwtService.generateToken(userId, expiresIn);
 
                 res.set('Access-Control-Expose-Headers', 'Authorization');
@@ -50,7 +50,7 @@ export class JwtMiddleware implements NestMiddleware {
             }
 
             oldToken = req.headers && req.headers.authorization && req.headers.authorization.split('Bearer ')[1];
-            userId = this.jwtService.verifyJwt(oldToken).data;
+            userId = this.jwtService.decodeJwt(oldToken).data;
             newToken = this.jwtService.generateToken(userId, expiresIn);
 
             res.set('Access-Control-Expose-Headers', 'Authorization');
