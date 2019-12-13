@@ -8,6 +8,7 @@ import { JwtService } from '../services/jwt.service';
 import { AuthGuard } from '../auth.guard';
 import { Category } from '../db/entities/category.entity';
 import { Request } from 'express';
+import { AuthorizationException } from '../exceptions/authorization.exception';
 //import { JwtService } from '../services/jwt.service';
 
 @Controller('user')
@@ -23,12 +24,8 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	getUserByToken(@Req() request: Request): Promise<AppUser> {
 		let token: string;
-		let userId: string;
 		if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
 			token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
-		}
-		if (token) {
-			userId = this.jwtService.verifyJwt(token).data;
 		}
 		console.log('---> getUserByToken ', token);
 		return this.userService.getUserByToken(token);
@@ -51,9 +48,11 @@ export class UserController {
 			result = await this.userService.createNewUser(userToSave);
 			const token = this.jwtService.generateToken(result.id, `2 hours`);
 			result.temporaryToken = `Bearer ${token}`;
-		} catch {
-			console.log('no result');
-			throw new LoginUserError('Oops. Something is wrong. Please, try again.');
+		} catch (error) {
+			console.log('login error ', error);
+			const isDuplicateEmail = error.message.includes(`duplicate key value violates unique constraint`) ? true : false;
+			const message = isDuplicateEmail ? `User with such an email already exists.` : `Login failed. Please, try again.`;
+			throw new AuthorizationException(message);
 		}
 		console.log('---> user REGISTRED', result);
 
@@ -73,9 +72,14 @@ export class UserController {
 	@Post('autorize')
 	async autorizeUser(@Req() req,
 		@Body() user: User): Promise<AppUser> {
-			const authorisedUser = await this.userService.getUserByEmail(user);
-			const token = this.jwtService.generateToken(authorisedUser.id, `7 days`);
-			authorisedUser.temporaryToken = `Bearer ${token}`;
+		let authorisedUser: AppUser;
+		try {
+			authorisedUser = await this.userService.getUserByEmail(user);
+		} catch (error) {
+			throw new AuthorizationException(`Invalid email or password. Please, try again.`);
+		}
+		const token = this.jwtService.generateToken(authorisedUser.id, `7 days`);
+		authorisedUser.temporaryToken = `Bearer ${token}`;
 		return authorisedUser;
 	}
 
