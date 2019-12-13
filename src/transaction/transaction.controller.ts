@@ -1,19 +1,15 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Req } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { TransactionService } from './transaction.service';
-import { CategoryService } from '../category/category.service'
 import { Transaction } from '../db/entities/transaction.entity';
-import { Category } from '../db/entities/category.entity';
-import { IncomingTransaction } from './transaction.dto';
 import { Request } from 'express';
-
+import { TransactionException } from '../exceptions/transaction.exception';
 
 @Controller('transaction')
 export class TransactionController {
     constructor(
         private appService: AppService,
         private transactionService: TransactionService,
-        private categoryService: CategoryService,
     ) { }
 
     @Post()
@@ -27,33 +23,35 @@ export class TransactionController {
         expenceToSave.comment = newExpence.comment;
         expenceToSave.category = newExpence.category;
 
-        const result: Transaction = await this.transactionService.saveTransaction(expenceToSave);
-        if (!result) {
-            console.log('Error');
-        }
-        return result;
+        let createdTransaction: Transaction;
+        try {
+			createdTransaction = await this.transactionService.saveTransaction(expenceToSave);
+		} catch (error) {
+			throw new TransactionException(`Couldn't save the transaction.`);
+		}
+        return createdTransaction;
     }
 
     @Patch()
     async editTransaction(@Body() transactionToUpsert: any): Promise<Transaction> {
-        const result: Transaction = await this.transactionService.updateTransaction(transactionToUpsert);
-        if (!result) {
-            console.log('Error');
-        }
-
-        return result;
+        let editedTransaction: Transaction;
+        try {
+			editedTransaction = await this.transactionService.updateTransaction(transactionToUpsert);
+		} catch (error) {
+			throw new TransactionException(`Couldn't edit the transaction.`);
+		}
+        return editedTransaction;
     }
 
     @Delete(`:transactionId`)
     async deleteTransaction(@Param('transactionId') transactionId, @Req() request: Request): Promise<Transaction> {
         const transactionToDelete = await this.transactionService.getTransactionById(transactionId);
-        transactionToDelete.isDeleted = true;
-
-        const result: Transaction = await this.transactionService.updateTransaction(transactionToDelete);
-        if (!result) {
-            console.log('Error');
-        }
-
-        return result;
+        let deletedTransaction: Transaction;
+        try {
+			deletedTransaction = await this.transactionService.updateTransaction(transactionToDelete);
+		} catch (error) {
+			throw new TransactionException(`Couldn't delete the transaction.`);
+		}
+        return deletedTransaction;
     }
 }

@@ -5,6 +5,7 @@ import { Category } from '../db/entities/category.entity';
 import { TransactionCategory } from './category.dto';
 import { Request } from 'express';
 import { JwtService } from '../services/jwt.service';
+import { CategoryException } from '../exceptions/category.exception';
 
 
 @Controller('category')
@@ -26,12 +27,18 @@ export class CategoryController {
         categoryToSave.isIncome = categoryToCreate.isIncome;
         categoryToSave.categoryIndex = isNaN(categoryToCreate.categoryIndex) ? -1 : categoryToCreate.categoryIndex;
         categoryToSave.icon = categoryToCreate.icon;
-        const result: Category[] = await this.categoryService.upsertCategory([categoryToSave]);
-        if (!result) {
-            console.log('Error');
+        const sameNameCategory = await this.categoryService.getCategoryByName(categoryToSave.name, categoryToSave.user);
+        if (sameNameCategory && sameNameCategory.hasOwnProperty('id') && sameNameCategory.isActive) {
+            throw new CategoryException(`Category of that name already exists.`);
         }
+        let savedCategories: Category[];
+        try {
+			savedCategories = await this.categoryService.upsertCategory([categoryToSave])
+		} catch (error) {
+			throw new CategoryException(`Category save failed.`);
+		}
 
-        return result;
+        return savedCategories;
     }
 
     @Patch()
