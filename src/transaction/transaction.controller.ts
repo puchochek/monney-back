@@ -36,6 +36,8 @@ export class TransactionController {
                 if (userWithUpdatedBalanceReset) {
                     createdTransaction = newTransaction;
                 }
+            } else {
+                createdTransaction = newTransaction;
             }
         } catch (error) {
             throw new TransactionException(`Couldn't save the transaction.`);
