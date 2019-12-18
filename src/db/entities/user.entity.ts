@@ -50,6 +50,9 @@ export class AppUser {
 	@Column({ nullable: true, type: "float" })
 	public balanceEdge: number;
 
+	@Column({ nullable: true, type: "float" })
+	public lastBalanceReset?: number;
+
 	@Column({ nullable: true })
 	public temporaryToken?: string;
 

@@ -92,6 +92,16 @@ export class UserService {
 			.getOne();
 	}
 
+	async getUserById(userId: string): Promise<AppUser> {
+		return await this.userRepository
+			.createQueryBuilder('app_user')
+			.select(USER_FIELDS)
+			.leftJoinAndSelect("app_user.categories", "category", "category.isActive = true")
+			.leftJoinAndSelect("app_user.transactions", "transaction", "transaction.isDeleted = false")
+			.where("app_user.id = :id", { id: userId })
+			.getOne();
+	}
+
 	async updateUser(user: any): Promise<AppUser> {
 
 		return await this.userRepository.save(user);

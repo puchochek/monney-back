@@ -8,17 +8,20 @@ import { AppService } from '../app.service';
 import { TransactionService } from './transaction.service';
 import { CategoryService } from '../category/category.service'
 import { DbModule } from '../db/db.module';
+import { UserModule } from '../user/user.module';
+
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Transaction]),
-    TypeOrmModule.forFeature([AppUser]),
-    TypeOrmModule.forFeature([Category]),
-    TransactionModule,
-    DbModule,
-  ],
-  controllers: [TransactionController],
-  providers: [TransactionService, AppService, CategoryService],
+	imports: [
+		TypeOrmModule.forFeature([Transaction]),
+		TypeOrmModule.forFeature([AppUser]),
+		TypeOrmModule.forFeature([Category]),
+		TransactionModule,
+		UserModule,
+		DbModule,
+	],
+	controllers: [TransactionController],
+	providers: [TransactionService, AppService, CategoryService],
 })
 export class TransactionModule { }
 

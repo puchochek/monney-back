@@ -15,6 +15,7 @@ import { ServicesModule } from '../services/services.module';
 		DbModule,
 		ServicesModule,
 	],
+	exports: [UserService],
 	controllers: [UserController],
 	providers: [UserService, AppService],
 

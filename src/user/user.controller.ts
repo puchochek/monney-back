@@ -33,10 +33,14 @@ export class UserController {
 		try {
 			userByToken = await this.userService.getUserByToken(token);
 			console.log('---> userByToken ', userByToken);
+			if (!userByToken) {
+				throw new UserException(`No users found`);
+			}
 		} catch (error) {
 			console.log('get user error ', error);
 			throw new UserException(`${error}`);
 		}
+
 		return userByToken;
 	}
 
@@ -51,6 +55,7 @@ export class UserController {
 		userToSave.theme = user.theme;
 		userToSave.isConfirmed = false;
 		userToSave.balanceEdge = 0;
+		userToSave.lastBalanceReset = new Date().getMonth() + 1;
 
 		let result: AppUser;
 		try {

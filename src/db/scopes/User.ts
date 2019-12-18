@@ -8,5 +8,6 @@ export const USER_FIELDS = [
     'app_user.createdAt',
     'app_user.updatedAt',
     'app_user.theme',
-    'app_user.balanceEdge'
+    'app_user.balanceEdge',
+    'app_user.lastBalanceReset'
 ];
