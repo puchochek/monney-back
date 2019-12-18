@@ -5,7 +5,7 @@ import { UserService } from '../user/user.service';
 import { Transaction } from '../db/entities/transaction.entity';
 import { Request } from 'express';
 import { TransactionException } from '../exceptions/transaction.exception';
-import { AppUser } from 'dist/db/entities/user.entity';
+import { AppUser } from '../db/entities/user.entity';
 import { UserException } from '../exceptions/user.exception';
 
 
