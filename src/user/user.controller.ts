@@ -10,7 +10,6 @@ import { Category } from '../db/entities/category.entity';
 import { Request } from 'express';
 import { AuthorizationException } from '../exceptions/authorization.exception';
 import { UserException } from '../exceptions/user.exception';
-//import { JwtService } from '../services/jwt.service';
 
 @Controller('user')
 export class UserController {
