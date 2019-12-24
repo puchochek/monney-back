@@ -4,11 +4,6 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class JwtService {
 
-    getId(): string {
-        const uuidv4 = require('uuid/v4');
-        return uuidv4();
-    }
-
     // generateToken(id: string, expiresInVal: string): string {
     // 	const alg = 'HS256';
     // 	const JWT_SECRET = process.env.JWT_SECRET;
