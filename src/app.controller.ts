@@ -6,11 +6,7 @@ import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 export class AppController {
 	constructor(private readonly appService: AppService) {
 		{
-
 			console.log('---> Hello, monney');
-
-
-
 		}
 	}
 
