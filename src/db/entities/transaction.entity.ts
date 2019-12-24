@@ -33,12 +33,12 @@ export class Transaction {
     @Column({ nullable: true, type: "float" })
     public sum: number;
 
-    @Column({ nullable: true })
-    public is_deleted: boolean;
+    @Column({ name: 'is_deleted', nullable: true })
+    public isDeleted: boolean;
 
     @CreateDateColumn({ name: 'created_at' })
-    public created_at: Date;
+    public createdAt: Date;
 
     @UpdateDateColumn({ name: 'updated_at' })
-    public updated_at: Date;
+    public updatedAt: Date;
 }

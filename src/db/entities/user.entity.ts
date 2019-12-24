@@ -33,18 +33,18 @@ export class User {
 	@Column({ nullable: true })
 	public password: string;
 
-	@Column({ nullable: true })
-	public is_сonfirmed: boolean;
+	@Column({ name: 'is_confirmed', nullable: true })
+	public isConfirmed: boolean;
 
 	@Column({ nullable: true })
-	public avatar: string;
+	public avatar?: string;
 
-	@Column({ nullable: true, type: "float" })
-    public balance_edge: number;
+	@Column({ name: 'balance_edge', nullable: true, type: "float" })
+    public balanceEdge: number;
 
 	@CreateDateColumn({ name: 'created_at' })
-	public created_at: Date;
+	public createdAt?: Date;
 
 	@UpdateDateColumn({ name: 'updated_at' })
-	public updated_at: Date;
+	public updatedAt?: Date;
 }

@@ -5,5 +5,6 @@ export class ApplicationUser {
     readonly password?: string;
     readonly id?: string;
     readonly isConfirmed: boolean;
+    readonly balanceEdge: boolean;
 
   }

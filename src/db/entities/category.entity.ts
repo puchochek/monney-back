@@ -32,15 +32,15 @@ export class Category {
     @Column({ nullable: true })
     public description: string;
 
-    @Column({ nullable: true })
-    public is_deleted: boolean;
+    @Column({ name: 'is_deleted', nullable: true })
+    public isDeleted: boolean;
 
-    @Column({ nullable: true })
-    public is_income: boolean;
+    @Column({ name: 'is_income', nullable: true })
+    public isIncome: boolean;
 
     @CreateDateColumn({ name: 'created_at' })
-    public created_at: Date;
+    public createdAt: Date;
 
     @UpdateDateColumn({ name: 'updated_at' })
-    public updated_at: Date;
+    public updatedAt: Date;
 }

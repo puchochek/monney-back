@@ -3,28 +3,25 @@ import { ApplicationUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
+import { EmailService } from '../services/email.service';
+import { EmailException } from '../exceptions/email.exception';
 
 @Injectable()
 export class UserService {
     constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
-		//private emailService: EmailService,
+		private emailService: EmailService,
 		//private jwtService: JwtService,
 	) { }
 
-    async createUser(user: ApplicationUser): Promise<ApplicationUser | User> {
+    async createUser(user: User): Promise<User> {
         const createdUser = await this.userRepository.save(user);
-		// let emailToSendAuth: string;
-		// let userId: string;
-
-		// if (createdUser) {
-		// 	emailToSendAuth = createdUser.email;
-		// 	userId = createdUser.id;
-		// }
-		// const emailSendResult = await this.emailService.sendRegistrationMail(emailToSendAuth, userId);
-
+        let emailSendResult;
+        try {
+            emailSendResult = await this.emailService.sendRegistrationMail(createdUser);
+        } catch(error) {
+            throw new EmailException(`Can't send email: ${error.message}`);
+        }
 		return createdUser;
-
     }
 }

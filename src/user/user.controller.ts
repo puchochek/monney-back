@@ -16,16 +16,46 @@ export class UserController {
     ) { }
 
     @Post('register')
-    async create(@Body() user: ApplicationUser) {
-        const userId = this.cryptService.getId();
-        console.log('---> userId ', userId);
+    async create(@Body() user: ApplicationUser): Promise<User> {
         console.log('---> create user ', user);
-        // return 'This action adds a new cat';
-        let newUser: ApplicationUser | User;
+        //temporary commented
+        // const isUserInputValid = this.validateUserInput(user);
+        // if (!isUserInputValid) {
+        //     throw new RegistrationException(`User input is malformed.`);
+        // }
+        const userToSave: User = {
+            id: this.cryptService.getId(),
+            name: user.name,
+            password: this.cryptService.hashPassword(user.password),
+            email: user.email,
+            isConfirmed: user.isConfirmed,
+            categories: [],
+            transactions: [],
+            balanceEdge: 0
+        };
+        console.log('---> userToSave ', userToSave);
+        let newUser: User;
         try {
-            newUser = await this.userService.createUser(user);
+            newUser = await this.userService.createUser(userToSave);
         } catch (error) {
             throw new RegistrationException(error.message);
         }
+        delete newUser[`password`];
+        return newUser;
+    }
+
+    validateUserInput(user: ApplicationUser): boolean {
+        const usernameRegexp = new RegExp('[0-9a-zA-Z]{3,30}');
+        const emailRegexp = new RegExp(
+            '^([a-zA-Z0-9_\\-.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9-]+\\.)+))([a-zA-Z]{2,4}|[0-9' +
+            ']{1,3})(\\]?)$',
+        );
+        const passwordRegexp = new RegExp('[0-9a-zA-Z]{6,30}');
+
+        const isPasswordValid = passwordRegexp.test(user.password);
+        const isEmailValid = emailRegexp.test(user.email);
+        const isUsernameValid = usernameRegexp.test(user.name);
+
+        return isPasswordValid && isEmailValid && isUsernameValid ? true : false;
     }
 }

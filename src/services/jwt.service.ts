@@ -4,16 +4,16 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class JwtService {
 
-    // generateToken(id: string, expiresInVal: string): string {
-    // 	const alg = 'HS256';
-    // 	const JWT_SECRET = process.env.JWT_SECRET;
+    generateToken(id: string, expiresInVal: string): string {
+        const alg = 'HS256';
+        const JWT_SECRET = process.env.JWT_SECRET;
 
-    // 	return jwt.sign(
-    // 		{ data: id },
-    // 		JWT_SECRET,
-    // 		{ expiresIn: expiresInVal }
-    // 	);
-    // }
+        return jwt.sign(
+            { data: id },
+            JWT_SECRET,
+            { expiresIn: expiresInVal }
+        );
+    }
 
     // decodeJwt(token: string): any {
     // 	//console.log('---> decodeJwt ', token);
