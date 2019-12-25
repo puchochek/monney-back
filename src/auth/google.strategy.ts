@@ -18,7 +18,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             clientSecret: process.env.CLIENT_SECRET,
             callbackURL: 'http://localhost:3000/auth/google/callback', //TODO setup remote endpoint
             passReqToCallback: true,
-            scope: ['profile']
+            scope: ['profile', 'email']
         })
     }
 
