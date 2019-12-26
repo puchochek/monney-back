@@ -1,12 +1,12 @@
 
-import { Controller, Get, Post, UseGuards, Res, Req, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Res, Req, Request, Body } from '@nestjs/common';
 import { ApplicationUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
 import { CryptService } from '../services/crypt.service';
 import { RegistrationException } from '../exceptions/registration.exception';
 import { UserService } from '../user/user.service';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -46,6 +46,81 @@ export class UserController {
         return newUser;
     }
 
+    @Post('activate')
+    async activateUser(@Body() { token }: { token: string }): Promise<User> {
+        const userToActivate = await this.userService.getUserByToken(token);
+        if (userToActivate) {
+            const userToUpdate = { ...userToActivate };
+            userToUpdate.isConfirmed = true;
+            return this.userService.updateUser(userToUpdate);
+        }
+    }
+
+    @Get()
+    @UseGuards(AuthGuard)
+    getUserByToken(@Req() request: Request): Promise<User> {
+        let token: string;
+        let userId: string;
+        console.log('---> request ', request.headers);
+        // if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+        // 	token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+        // }
+        if (token) {
+            //userId = this.jwtService.verifyJwt(token).data;
+        }
+        console.log('---> getUserByToken ', token);
+        return this.userService.getUserByToken(token);
+    }
+
+    // @Get('google')
+    // @UseGuards(AuthGuard('google'))
+    // googleLogin() {
+    //     /*initiates the Google OAuth2 login flow*/
+    // }
+
+    // @Get('google/callback')
+    // @UseGuards(AuthGuard('google'))
+    // async googleLoginCallback(@Req() req, @Res() res) {
+    //     /* handles the Google OAuth2 callback */
+    //     const expiresIn = '2 hours';
+    //     let jwt: string;
+    //     console.log(' USER CTRL req.user ', req.user);
+    //     const googleAuthUser = { ...req.user.googleUser };
+    //     const existedUser = await this.userService.getUserByEmail(googleAuthUser.email);
+    //     console.log('---> existedUser ', existedUser);
+    //     if (existedUser && existedUser.id) {
+    //         jwt = this.jwtService.generateToken(existedUser.id, expiresIn);
+    //     } else {
+    //         const userToSave: User = {
+    //             id: this.cryptService.getId(),
+    //             name: googleAuthUser.name,
+    //             email: googleAuthUser.email,
+    //             isConfirmed: false,
+    //             categories: [],
+    //             transactions: [],
+    //             balanceEdge: 0,
+    //             avatar: googleAuthUser.avatar,
+    //             provider: `google`
+    //         };
+
+    //         let newUser: User;
+    //         try {
+    //             newUser = await this.userService.createUser(userToSave);
+    //             console.log('---> newUser ', newUser);
+    //             jwt = this.jwtService.generateToken(newUser.id, expiresIn);
+    //         } catch (error) {
+    //             throw new RegistrationException(error.message);
+    //         }
+
+    //     }
+    //     console.log('jwt ', jwt);
+    //     const successRedirectUrl = `${process.env.CLIENT_URL}/auth/${jwt}`;
+    //     if (jwt)
+    //         res.redirect(successRedirectUrl);
+    //     else
+    //         res.redirect(process.env.CLIENT_URL);
+    // }
+
     validateUserInput(user: ApplicationUser): boolean {
         const usernameRegexp = new RegExp('[0-9a-zA-Z]{3,30}');
         const emailRegexp = new RegExp(
@@ -61,52 +136,4 @@ export class UserController {
         return isPasswordValid && isEmailValid && isUsernameValid ? true : false;
     }
 
-    @Get('google')
-    @UseGuards(AuthGuard('google'))
-    googleLogin() {
-        /*initiates the Google OAuth2 login flow*/
-    }
-
-    @Get('google/callback')
-    @UseGuards(AuthGuard('google'))
-    async googleLoginCallback(@Req() req, @Res() res) {
-        /* handles the Google OAuth2 callback */
-        const expiresIn = '2 hours';
-        let jwt: string;
-        console.log(' USER CTRL req.user ', req.user);
-        const googleAuthUser = {...req.user.googleUser};
-        const existedUser = await this.userService.getUserByEmail(googleAuthUser.email);
-        console.log('---> existedUser ', existedUser);
-        if (existedUser && existedUser.id) {
-            jwt = this.jwtService.generateToken(existedUser.id, expiresIn);
-        } else {
-            const userToSave: User = {
-                id: this.cryptService.getId(),
-                name: googleAuthUser.name,
-                email: googleAuthUser.email,
-                isConfirmed: false,
-                categories: [],
-                transactions: [],
-                balanceEdge: 0,
-                avatar: googleAuthUser.avatar,
-                provider: `google`
-            };
-
-            let newUser: User;
-            try {
-                newUser = await this.userService.createUser(userToSave);
-                console.log('---> newUser ', newUser);
-                jwt = this.jwtService.generateToken(newUser.id, expiresIn);
-            } catch (error) {
-                throw new RegistrationException(error.message);
-            }
-
-        }
-        console.log('jwt ', jwt);
-        const successRedirectUrl = `${process.env.CLIENT_REDIRECT_URL}/${jwt}`;
-        if (jwt)
-            res.redirect(successRedirectUrl);
-        else
-            res.redirect(process.env.CLIENT_URL);
-    }
 }

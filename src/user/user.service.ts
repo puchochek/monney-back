@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EmailService } from '../services/email.service';
 import { EmailException } from '../exceptions/email.exception';
 import { CryptService } from '../services/crypt.service';
+import { JwtService } from '../services/jwt.service';
 import { USER_FIELDS } from '../db/scopes/User';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class UserService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         private emailService: EmailService,
         private cryptService: CryptService,
+        private jwtService: JwtService
     ) { }
 
     async createUser(user: User): Promise<User> {
@@ -50,5 +52,21 @@ export class UserService {
         // }
         console.log('---> getUserByEmail ', userByEmail);
         return userByEmail;
+    }
+
+    async getUserByToken(token: string): Promise<User> {
+        const userId = this.jwtService.decodeJwt(token).data;
+        return await this.userRepository
+            .createQueryBuilder('user')
+            .select(USER_FIELDS)
+            .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
+            .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
+            .where("user.id = :id", { id: userId })
+            .getOne();
+    }
+
+    async updateUser(user: User): Promise<User> {
+
+        return await this.userRepository.save(user);
     }
 }
