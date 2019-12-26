@@ -31,7 +31,10 @@ export class User {
 	public email: string;
 
 	@Column({ nullable: true })
-	public password: string;
+	public password?: string;
+
+	@Column({ nullable: true })
+	public provider: string;
 
 	@Column({ name: 'is_confirmed', nullable: true })
 	public isConfirmed: boolean;

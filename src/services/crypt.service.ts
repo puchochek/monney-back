@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-//import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class CryptService {
@@ -16,7 +15,7 @@ export class CryptService {
 
         return hashedPassword ? hashedPassword : 'Error';
     }
-    //FFU
+
     comparePasswords(passwordToCompare: string, selectedUserPassword: string): boolean {
         return bcrypt.compareSync(passwordToCompare, selectedUserPassword);
     }

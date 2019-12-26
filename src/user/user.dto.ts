@@ -4,6 +4,7 @@ export class ApplicationUser {
     readonly email: string;
     readonly password?: string;
     readonly id?: string;
+    readonly provider?: string;
     readonly isConfirmed: boolean;
     readonly balanceEdge: boolean;
 

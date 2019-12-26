@@ -32,7 +32,8 @@ export class UserController {
             isConfirmed: user.isConfirmed,
             categories: [],
             transactions: [],
-            balanceEdge: 0
+            balanceEdge: 0,
+            provider: user.provider
         };
         console.log('---> userToSave ', userToSave);
         let newUser: User;
@@ -62,20 +63,49 @@ export class UserController {
 
     @Get('google')
     @UseGuards(AuthGuard('google'))
-    googleLogin()
-    {
-        // initiates the Google OAuth2 login flow
+    googleLogin() {
+        /*initiates the Google OAuth2 login flow*/
     }
 
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
-    googleLoginCallback(@Req() req, @Res() res) {
-        // handles the Google OAuth2 callback
-        const jwt: string = req.user.jwt;
+    async googleLoginCallback(@Req() req, @Res() res) {
+        /* handles the Google OAuth2 callback */
+        const expiresIn = '2 hours';
+        let jwt: string;
         console.log(' USER CTRL req.user ', req.user);
+        const googleAuthUser = {...req.user.googleUser};
+        const existedUser = await this.userService.getUserByEmail(googleAuthUser.email);
+        console.log('---> existedUser ', existedUser);
+        if (existedUser && existedUser.id) {
+            jwt = this.jwtService.generateToken(existedUser.id, expiresIn);
+        } else {
+            const userToSave: User = {
+                id: this.cryptService.getId(),
+                name: googleAuthUser.name,
+                email: googleAuthUser.email,
+                isConfirmed: false,
+                categories: [],
+                transactions: [],
+                balanceEdge: 0,
+                avatar: googleAuthUser.avatar,
+                provider: `google`
+            };
+
+            let newUser: User;
+            try {
+                newUser = await this.userService.createUser(userToSave);
+                console.log('---> newUser ', newUser);
+                jwt = this.jwtService.generateToken(newUser.id, expiresIn);
+            } catch (error) {
+                throw new RegistrationException(error.message);
+            }
+
+        }
         console.log('jwt ', jwt);
+        const successRedirectUrl = `${process.env.CLIENT_REDIRECT_URL}/${jwt}`;
         if (jwt)
-            res.redirect(process.env.CLIENT_REDIRECT_URL); //HARDCODED
+            res.redirect(successRedirectUrl);
         else
             res.redirect(process.env.CLIENT_URL);
     }

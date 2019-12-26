@@ -23,7 +23,7 @@ export class EmailService {
     public sendRegistrationMail(user: User): Promise<any> {
         const expiresIn = '2 hours';
         const token = this.jwtService.generateToken(user.id, expiresIn);
-        const link = `<a href="${process.env.CLIENT_URL}/activate/${token}">${process.env.CLIENT_URL}/activate/${token}</a>`;
+        const link = `<a href="${process.env.CLIENT_URL}/auth/${token}">${process.env.CLIENT_URL}/auth/${token}</a>`;
 
         return this.server.sendMail({
             text: `''`,
