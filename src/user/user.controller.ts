@@ -1,11 +1,12 @@
 
-import { Controller, Get, Post, Req, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Res, Req, Body } from '@nestjs/common';
 import { ApplicationUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
 import { CryptService } from '../services/crypt.service';
 import { RegistrationException } from '../exceptions/registration.exception';
 import { UserService } from '../user/user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -57,5 +58,25 @@ export class UserController {
         const isUsernameValid = usernameRegexp.test(user.name);
 
         return isPasswordValid && isEmailValid && isUsernameValid ? true : false;
+    }
+
+    @Get('google')
+    @UseGuards(AuthGuard('google'))
+    googleLogin()
+    {
+        // initiates the Google OAuth2 login flow
+    }
+
+    @Get('google/callback')
+    @UseGuards(AuthGuard('google'))
+    googleLoginCallback(@Req() req, @Res() res) {
+        // handles the Google OAuth2 callback
+        const jwt: string = req.user.jwt;
+        console.log(' USER CTRL req.user ', req.user);
+        console.log('jwt ', jwt);
+        if (jwt)
+            res.redirect(process.env.CLIENT_REDIRECT_URL); //HARDCODED
+        else
+            res.redirect(process.env.CLIENT_URL);
     }
 }

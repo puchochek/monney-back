@@ -6,7 +6,8 @@ import { ServicesModule } from './services/services.module';
 import { DbModule } from './db/db.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './db/entities/user.entity';
-import { AuthModule } from './auth/auth.module';
+import { StrategiesModule } from './strategies/strategies.module';
+import { from } from 'rxjs';
 
 @Module({
 	imports: [
@@ -15,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
 		UserModule,
 		ServicesModule,
 		DbModule,
-		AuthModule],
+		StrategiesModule],
 	controllers: [AppController],
 	providers: [AppService],
 })
