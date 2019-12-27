@@ -1,12 +1,14 @@
 
-import { Controller, Get, Post, UseGuards, Res, Req, Request, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Res, Req, Body } from '@nestjs/common';
 import { ApplicationUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
 import { CryptService } from '../services/crypt.service';
 import { RegistrationException } from '../exceptions/registration.exception';
 import { UserService } from '../user/user.service';
-import { AuthGuard } from '../guards/auth.guard';
+import { JwtGuard } from '../guards/jwt.guard';
+//import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -57,18 +59,18 @@ export class UserController {
     }
 
     @Get()
-    @UseGuards(AuthGuard)
-    getUserByToken(@Req() request: Request): Promise<User> {
+    @UseGuards(JwtGuard)
+    async getUserByToken(@Req() request: Request): Promise<User> {
         let token: string;
         let userId: string;
-        console.log('---> request ', request.headers);
-        // if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
-        // 	token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
-        // }
-        if (token) {
-            //userId = this.jwtService.verifyJwt(token).data;
+
+        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
-        console.log('---> getUserByToken ', token);
+        if (token) {
+            userId = this.jwtService.decodeJwt(token).data;
+        }
+
         return this.userService.getUserByToken(token);
     }
 

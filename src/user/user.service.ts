@@ -43,7 +43,6 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction")
             .where("user.email = :email", { email: email })
             .getOne();
-
         // const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
 
         // let userToReturn: User;
@@ -56,13 +55,15 @@ export class UserService {
 
     async getUserByToken(token: string): Promise<User> {
         const userId = this.jwtService.decodeJwt(token).data;
-        return await this.userRepository
-            .createQueryBuilder('user')
-            .select(USER_FIELDS)
-            .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
-            .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
-            .where("user.id = :id", { id: userId })
-            .getOne();
+        const userByToken = await this.userRepository
+        .createQueryBuilder('user')
+        .select(USER_FIELDS)
+        .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
+        .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
+        .where("user.id = :id", { id: userId })
+        .getOne();
+        console.log('---> getUserByToken ', userByToken );
+        return userByToken;
     }
 
     async updateUser(user: User): Promise<User> {

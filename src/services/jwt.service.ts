@@ -1,12 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { TokenException } from '../exceptions/token.exception';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class JwtService {
     private readonly JWT_SECRET = process.env.JWT_SECRET;
 
-    constructor() {
-    };
+    constructor() {};
 
     generateToken(id: string, expiresInVal: string): string {
 
@@ -22,8 +22,7 @@ export class JwtService {
         try {
             jwtDecoded = jwt.verify(token, this.JWT_SECRET);
         } catch (err) {
-            console.log(`Error verifying token: ${err.name}`);
-            return null;
+            throw new TokenException(`Error verifying token: ${err.name}`);
         }
 
         return jwtDecoded;

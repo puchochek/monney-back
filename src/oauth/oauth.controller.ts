@@ -26,7 +26,7 @@ export class OauthController {
         /* handles the Google OAuth2 callback */
         const expiresIn = '2 hours';
         let jwt: string;
-        console.log(' USER CTRL req.user ', req.user);
+
         const googleAuthUser = { ...req.user.googleUser };
         const existedUser = await this.userService.getUserByEmail(googleAuthUser.email);
         console.log('---> existedUser ', existedUser);
@@ -55,7 +55,7 @@ export class OauthController {
             }
 
         }
-        console.log('jwt ', jwt);
+
         const successRedirectUrl = `${process.env.CLIENT_URL}/auth/${jwt}`;
         if (jwt)
             res.redirect(successRedirectUrl);
