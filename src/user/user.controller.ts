@@ -51,6 +51,7 @@ export class UserController {
     @Post('activate')
     async activateUser(@Body() { token }: { token: string }): Promise<User> {
         const userToActivate = await this.userService.getUserByToken(token);
+        console.log('---> userToActivate ', userToActivate);
         if (userToActivate) {
             const userToUpdate = { ...userToActivate };
             userToUpdate.isConfirmed = true;

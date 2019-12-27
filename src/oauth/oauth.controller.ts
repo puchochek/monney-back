@@ -56,7 +56,8 @@ export class OauthController {
 
         }
 
-        const successRedirectUrl = `${process.env.CLIENT_URL}/auth/${jwt}`;
+        const successRedirectUrl = `${process.env.CLIENT_REDIRECT_URL}/${jwt}`;
+        console.log('---> successRedirectUrl ', successRedirectUrl);
         if (jwt)
             res.redirect(successRedirectUrl);
         else
