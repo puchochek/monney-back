@@ -1,31 +1,33 @@
 
 import { Controller, Get, Post, UseGuards, Res, Req, Body } from '@nestjs/common';
-import { ApplicationUser } from '../user/user.dto';
+import { ApplicationUser, LoginUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
 import { CryptService } from '../services/crypt.service';
 import { RegistrationException } from '../exceptions/registration.exception';
+import { LoginException } from '../exceptions/login.exception';
 import { UserService } from '../user/user.service';
 import { JwtGuard } from '../guards/jwt.guard';
 //import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
+
 @Controller('user')
 export class UserController {
+
     constructor(
         private jwtService: JwtService,
         private userService: UserService,
         private cryptService: CryptService,
     ) { }
 
-    @Post('register')
-    async create(@Body() user: ApplicationUser): Promise<User> {
+    @Post('singin')
+    async createUser(@Body() user: ApplicationUser): Promise<User> {
         console.log('---> create user ', user);
-        //temporary commented
-        // const isUserInputValid = this.validateUserInput(user);
-        // if (!isUserInputValid) {
-        //     throw new RegistrationException(`User input is malformed.`);
-        // }
+        const isUserInputValid = this.validateUserInput(user);
+        if (!isUserInputValid) {
+            throw new RegistrationException(`User input is malformed.`);
+        }
         const userToSave: User = {
             id: this.cryptService.getId(),
             name: user.name,
@@ -59,70 +61,34 @@ export class UserController {
         }
     }
 
+    @Post('singup')
+    async loginUser(@Body() user: LoginUser): Promise<User> {
+        let userByEmailAndPassword;
+        try {
+            userByEmailAndPassword = await this.userService.getUserByEmailAndPassword(user);
+        } catch (error) {
+            throw new LoginException(error.message);
+        }
+        console.log('---> userByEmailAndPassword Controller ', userByEmailAndPassword);
+        return userByEmailAndPassword;
+    }
+
     @Get()
-    @UseGuards(JwtGuard)
     async getUserByToken(@Req() request: Request): Promise<User> {
         let token: string;
-        let userId: string;
-
         if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
             token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
-        if (token) {
-            userId = this.jwtService.decodeJwt(token).data;
+
+        let userByToken: User;
+        try {
+            userByToken = await this.userService.getUserByToken(token);
+        } catch (error) {
+            throw new LoginException(error.message);
         }
-
-        return this.userService.getUserByToken(token);
+        console.log('---> getUserByToken controller ', token);
+        return userByToken;
     }
-
-    // @Get('google')
-    // @UseGuards(AuthGuard('google'))
-    // googleLogin() {
-    //     /*initiates the Google OAuth2 login flow*/
-    // }
-
-    // @Get('google/callback')
-    // @UseGuards(AuthGuard('google'))
-    // async googleLoginCallback(@Req() req, @Res() res) {
-    //     /* handles the Google OAuth2 callback */
-    //     const expiresIn = '2 hours';
-    //     let jwt: string;
-    //     console.log(' USER CTRL req.user ', req.user);
-    //     const googleAuthUser = { ...req.user.googleUser };
-    //     const existedUser = await this.userService.getUserByEmail(googleAuthUser.email);
-    //     console.log('---> existedUser ', existedUser);
-    //     if (existedUser && existedUser.id) {
-    //         jwt = this.jwtService.generateToken(existedUser.id, expiresIn);
-    //     } else {
-    //         const userToSave: User = {
-    //             id: this.cryptService.getId(),
-    //             name: googleAuthUser.name,
-    //             email: googleAuthUser.email,
-    //             isConfirmed: false,
-    //             categories: [],
-    //             transactions: [],
-    //             balanceEdge: 0,
-    //             avatar: googleAuthUser.avatar,
-    //             provider: `google`
-    //         };
-
-    //         let newUser: User;
-    //         try {
-    //             newUser = await this.userService.createUser(userToSave);
-    //             console.log('---> newUser ', newUser);
-    //             jwt = this.jwtService.generateToken(newUser.id, expiresIn);
-    //         } catch (error) {
-    //             throw new RegistrationException(error.message);
-    //         }
-
-    //     }
-    //     console.log('jwt ', jwt);
-    //     const successRedirectUrl = `${process.env.CLIENT_URL}/auth/${jwt}`;
-    //     if (jwt)
-    //         res.redirect(successRedirectUrl);
-    //     else
-    //         res.redirect(process.env.CLIENT_URL);
-    // }
 
     validateUserInput(user: ApplicationUser): boolean {
         const usernameRegexp = new RegExp('[0-9a-zA-Z]{3,30}');

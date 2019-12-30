@@ -24,7 +24,7 @@ export class JwtService {
         } catch (err) {
             throw new TokenException(`Error verifying token: ${err.name}`);
         }
-
+        console.log('---> jwtDecoded ', jwtDecoded);
         return jwtDecoded;
     }
 }

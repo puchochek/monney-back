@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApplicationUser } from '../user/user.dto';
+import { ApplicationUser, LoginUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +12,7 @@ import { USER_FIELDS } from '../db/scopes/User';
 @Injectable()
 export class UserService {
     GOOGLE_PROVIDER: string = `google`;
+
     constructor(
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         private emailService: EmailService,
@@ -35,7 +36,6 @@ export class UserService {
     }
 
     async getUserByEmail(email: string): Promise<User> {
-        console.log('---> email ', email);
         const userByEmail = await this.userRepository
             .createQueryBuilder('user')
             .select(USER_FIELDS)
@@ -43,26 +43,39 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction")
             .where("user.email = :email", { email: email })
             .getOne();
-        // const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
-
-        // let userToReturn: User;
-        // if (isPassvordConfirmed) {
-        //     userToReturn = { ...userByEmail };
-        // }
         console.log('---> getUserByEmail ', userByEmail);
         return userByEmail;
+    }
+
+    async getUserByEmailAndPassword(user: LoginUser) {
+        const userByEmail = await this.userRepository
+            .createQueryBuilder('user')
+            .select(USER_FIELDS)
+            .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
+            .leftJoinAndSelect("user.transactions", "transaction")
+            .where("user.email = :email", { email: user.email })
+            .getOne();
+        const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
+
+        let userByEmailAndPassword: User;
+        if (isPassvordConfirmed) {
+            userByEmailAndPassword = { ...userByEmail };
+        }
+        console.log('---> userByEmailAndPassword Service ', userByEmailAndPassword);
+        return userByEmailAndPassword;
+
     }
 
     async getUserByToken(token: string): Promise<User> {
         const userId = this.jwtService.decodeJwt(token).data;
         const userByToken = await this.userRepository
-        .createQueryBuilder('user')
-        .select(USER_FIELDS)
-        .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
-        .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
-        .where("user.id = :id", { id: userId })
-        .getOne();
-        console.log('---> getUserByToken ', userByToken );
+            .createQueryBuilder('user')
+            .select(USER_FIELDS)
+            .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
+            .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
+            .where("user.id = :id", { id: userId })
+            .getOne();
+
         return userByToken;
     }
 

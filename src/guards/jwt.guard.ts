@@ -15,12 +15,15 @@ export class JwtGuard implements CanActivate {
 
         const token =
             request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1];
-
+        let canActivate: boolean;
         let jwtDecoded: string;
         if (token) {
             jwtDecoded = this.jwtService.decodeJwt(token).data;
+            jwtDecoded ? true : false;
+        } else {
+            canActivate = true;
         }
-        console.log('---> JwtGuard canActivate token ', jwtDecoded);
-        return jwtDecoded ? true : false;
+
+        return canActivate;
     }
 }
