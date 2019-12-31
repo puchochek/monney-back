@@ -67,7 +67,9 @@ export class UserService {
     }
 
     async getUserByToken(token: string): Promise<User> {
+        console.log('---> getUserByToken token ', token);
         const userId = this.jwtService.decodeJwt(token).data;
+        console.log('---> getUserByToken userId ', userId);
         const userByToken = await this.userRepository
             .createQueryBuilder('user')
             .select(USER_FIELDS)

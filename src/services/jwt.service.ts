@@ -19,6 +19,8 @@ export class JwtService {
 
     decodeJwt(token: string): any {
         let jwtDecoded: {};
+        console.log('---> jwt token ', token );
+        console.log('---> this.JWT_SECRET ', this.JWT_SECRET);
         try {
             jwtDecoded = jwt.verify(token, this.JWT_SECRET);
         } catch (err) {

@@ -91,14 +91,14 @@ export class UserController {
         if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
             token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
-
+        console.log('---> getUserByToken token ', token);
         let userByToken: User;
         try {
             userByToken = await this.userService.getUserByToken(token);
         } catch (error) {
             throw new LoginException(error.message);
         }
-        console.log('---> getUserByToken controller ', token);
+        console.log('---> getUserByToken controller ', userByToken);
         return userByToken;
     }
 
