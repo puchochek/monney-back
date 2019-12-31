@@ -61,6 +61,18 @@ export class UserController {
         }
     }
 
+    @Post('token')
+    async updateUserSession(@Body() { id }: { id: string }): Promise<User> {
+        let userById;
+        try {
+            userById = await this.userService.getUserById(id);
+        } catch (error) {
+            throw new LoginException(error.message);
+        }
+
+        return userById;
+    }
+
     @Post('singup')
     async loginUser(@Body() user: LoginUser): Promise<User> {
         let userByEmailAndPassword;

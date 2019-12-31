@@ -40,6 +40,16 @@ export class JwtMiddleware implements NestMiddleware {
             res.set('Authorization', `Bearer ${newToken}`);
             return next();
         }
+
+        if (req.originalUrl === `/user/token` && !req.headers.authorization) {
+            console.log('---> case 3' );
+            const userId: string = req.body.token;
+            const newToken: string = this.jwtService.generateToken(userId, this.EXPIRES_IN);
+
+            res.set('Access-Control-Expose-Headers', 'Authorization');
+            res.set('Authorization', `Bearer ${newToken}`);
+            return next();
+        }
         console.log('---> next');
         next();
     }
