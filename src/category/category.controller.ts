@@ -16,16 +16,27 @@ export class CategoryController {
     ) { }
 
     @Post()
-    async createCategory(@Body() categoryToCreate: TransactionCategory): Promise<Category> {
+    async createCategory(
+        @Req() request,
+        @Body() categoryToCreate: TransactionCategory
+    ): Promise<Category> {
+        let token: string;
+		let userId: string;
+		if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+			token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+		}
+		if (token) {
+			userId = this.jwtService.decodeJwt(token).data;
+		}
         const categoryToSave = new Category;
         categoryToSave.id = this.cryptService.getId();
         categoryToSave.description = categoryToCreate.description;
-        categoryToSave.user = categoryToCreate.user;
+        categoryToSave.user = categoryToCreate.user ? categoryToCreate.user : userId;
         categoryToSave.name = categoryToCreate.name;
+        categoryToSave.icon = categoryToCreate.icon,
         categoryToSave.isDeleted = false;
         categoryToSave.isIncome = categoryToCreate.isIncome;
         categoryToSave.transactions = [];
-        //categoryToSave.icon = categoryToCreate.icon; //FFU
 
         let category: Category;
         try {
@@ -33,7 +44,7 @@ export class CategoryController {
         } catch (error) {
             throw new CategoryException(error.message);
         }
-        console.log('---> created category ', category );
+        console.log('---> created category ', category);
         return category;
     }
 }

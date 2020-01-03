@@ -32,6 +32,9 @@ export class Category {
     @Column({ nullable: true })
     public description: string;
 
+    @Column({ nullable: true })
+    public icon: string;
+
     @Column({ name: 'is_deleted', nullable: true })
     public isDeleted: boolean;
 

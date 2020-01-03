@@ -3,6 +3,7 @@ export class TransactionCategory {
 	name: string;
 	description: string;
 	user: string;
+	icon: string;
 	isDeleted: boolean;
 	isIncome: boolean;
 	transactions: [];
