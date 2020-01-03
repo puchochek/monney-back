@@ -81,17 +81,17 @@ export class UserService {
         return userByToken;
     }
 
-    async getUserById(userId: string): Promise<User> {
-        const userByToken = await this.userRepository
-            .createQueryBuilder('user')
-            .select(USER_FIELDS)
-            .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
-            .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
-            .where("user.id = :id", { id: userId })
-            .getOne();
+    // async getUserById(userId: string): Promise<User> {
+    //     const userByToken = await this.userRepository
+    //         .createQueryBuilder('user')
+    //         .select(USER_FIELDS)
+    //         .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
+    //         .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
+    //         .where("user.id = :id", { id: userId })
+    //         .getOne();
 
-        return userByToken;
-    }
+    //     return userByToken;
+    // }
 
     async updateUser(user: User): Promise<User> {
 

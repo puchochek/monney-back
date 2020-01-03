@@ -1,5 +1,5 @@
 
-import { Controller, Get, Post, UseGuards, Res, Req, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Res, Req, Body, HttpCode } from '@nestjs/common';
 import { ApplicationUser, LoginUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
@@ -62,15 +62,9 @@ export class UserController {
     }
 
     @Post('token')
-    async updateUserSession(@Body() { id }: { id: string }): Promise<User> {
-        let userById;
-        try {
-            userById = await this.userService.getUserById(id);
-        } catch (error) {
-            throw new LoginException(error.message);
-        }
+    @HttpCode(201)
+    async updateUserSession(@Body() { id }: { id: string }) {
 
-        return userById;
     }
 
     @Post('singup')

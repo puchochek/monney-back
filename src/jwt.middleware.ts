@@ -43,7 +43,7 @@ export class JwtMiddleware implements NestMiddleware {
 
         if (req.originalUrl === `/user/token` && !req.headers.authorization) {
             console.log('---> case 3' );
-            const userId: string = req.body.token;
+            const userId: string = req.body.id;
             const newToken: string = this.jwtService.generateToken(userId, this.EXPIRES_IN);
 
             res.set('Access-Control-Expose-Headers', 'Authorization');
