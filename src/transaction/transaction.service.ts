@@ -6,8 +6,7 @@ import { CryptService } from '../services/crypt.service';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-
+import { TRANSACTION_FIELDS } from '../db/scopes/Transaction';
 
 @Injectable()
 export class TransactionService {
@@ -35,5 +34,17 @@ export class TransactionService {
         transactionToSave.category = category.id;
 
         return await this.transactionRepository.save(transactionToSave);
+    }
+
+    async getTransactionsByCategoryAndUserId(categoryName: string, userId: string): Promise<Transaction[]> {
+        const category = await this.categoryService.getCategoryByName(categoryName, userId);
+
+        const transactions = await this.transactionRepository
+            .createQueryBuilder('transaction')
+            .select(TRANSACTION_FIELDS)
+            .where("category = :categoryId AND is_deleted = false", { categoryId: category.id })
+            .getMany();
+
+        return transactions;
     }
 }

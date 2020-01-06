@@ -1,4 +1,4 @@
-import { Controller, Req, Body, Post, } from '@nestjs/common';
+import { Controller, Req, Body, Post, Get, Param } from '@nestjs/common';
 import { TransactionInput } from '../transaction/transaction.dto';
 import { TransactionService } from './transaction.service';
 import { CryptService } from '../services/crypt.service';
@@ -16,11 +16,32 @@ export class TransactionController {
 
     ) { }
 
+    @Get('/:category')
+    async getTransactionsByCategory(
+        @Req() request,
+        @Param('category') category: string): Promise<Transaction[]> {
+        let token: string;
+        let userId: string;
+        if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
+            token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
+        }
+        if (token) {
+            userId = this.jwtService.decodeJwt(token).data;
+        }
+        let transactions: Transaction[];
+        try {
+            transactions = await this.transactionService.getTransactionsByCategoryAndUserId(category, userId);
+        } catch (error) {
+            throw new TransactionException(error.message);
+        }
+        console.log('---> getTransactionsByCategory controller ', transactions);
+        return transactions;
+    }
+
     @Post()
     async createTransaction(
         @Req() request,
-        @Body() newTransaction: TransactionInput
-    ): Promise<Transaction> {
+        @Body() newTransaction: TransactionInput): Promise<Transaction> {
         let token: string;
         let userId: string;
         if (!newTransaction.user) {
