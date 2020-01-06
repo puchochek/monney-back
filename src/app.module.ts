@@ -5,6 +5,7 @@ import { ServicesModule } from './services/services.module';
 import { DbModule } from './db/db.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './db/entities/user.entity';
+import { Transaction } from './db/entities/transaction.entity';
 import { StrategiesModule } from './strategies/strategies.module';
 import { CategoryModule } from './category/category.module';
 import { TransactionModule } from './transaction/transaction.module';
@@ -18,6 +19,7 @@ import { JwtMiddleware } from './jwt.middleware';
 
 @Module({
 	imports: [
+		TypeOrmModule.forFeature([Transaction]),
 		TypeOrmModule.forFeature([User]),
 		TypeOrmModule,
 		UserModule,

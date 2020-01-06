@@ -6,6 +6,8 @@ import { AppService } from '../app.service';
 import { getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CATEGORY_FIELDS } from '../db/scopes/Category';
+
 
 @Injectable()
 export class CategoryService {
@@ -18,5 +20,15 @@ export class CategoryService {
         const upsertedCategories = await this.categoryRepository.save(categoriesToUpsert);
 
         return upsertedCategories;
+    }
+
+    async getCategoryByName(categoryName: string, userId: string): Promise<Category> {
+        const category = await this.categoryRepository
+            .createQueryBuilder('category')
+            .select(CATEGORY_FIELDS)
+            .where("category.name = :categoryName AND category.user = :userId", { categoryName: categoryName, userId: userId })
+            .getOne();
+        console.log('---> category by name ', category);
+        return category;
     }
 }
