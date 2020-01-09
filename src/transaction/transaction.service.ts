@@ -36,15 +36,15 @@ export class TransactionService {
         return await this.transactionRepository.save(transactionToSave);
     }
 
-    async getTransactionsByCategoryAndUserId(categoryName: string, userId: string): Promise<Transaction[]> {
-        const category = await this.categoryService.getCategoryByName(categoryName, userId);
+    async updateTransaction(tarnsactionToUpdateData: TransactionInput): Promise<Transaction> {
 
-        const transactions = await this.transactionRepository
-            .createQueryBuilder('transaction')
-            .select(TRANSACTION_FIELDS)
-            .where("category = :categoryId AND is_deleted = false", { categoryId: category.id })
-            .getMany();
+        const transactionToUpdate = new Transaction;
+        transactionToUpdate.id = tarnsactionToUpdateData.id;
+        transactionToUpdate.isDeleted = tarnsactionToUpdateData.isDeleted;
+        transactionToUpdate.date = new Date(tarnsactionToUpdateData.date);
+        transactionToUpdate.sum = tarnsactionToUpdateData.sum;
+        transactionToUpdate.comment = tarnsactionToUpdateData.comment;
 
-        return transactions;
-    }
+		return await this.transactionRepository.save(transactionToUpdate);
+	}
 }
