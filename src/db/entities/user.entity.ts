@@ -36,7 +36,7 @@ export class User {
 	@Column({ nullable: true })
 	public provider: string;
 
-	@Column({ nullable: true })
+	@Column({ name: 'sort_categories_by', nullable: true })
 	public sortCategoriesBy: string;
 
 	@Column({ name: 'is_confirmed', nullable: true })
