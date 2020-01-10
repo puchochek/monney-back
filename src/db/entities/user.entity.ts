@@ -36,6 +36,9 @@ export class User {
 	@Column({ nullable: true })
 	public provider: string;
 
+	@Column({ nullable: true })
+	public sortCategoriesBy: string;
+
 	@Column({ name: 'is_confirmed', nullable: true })
 	public isConfirmed: boolean;
 
@@ -43,7 +46,7 @@ export class User {
 	public avatar?: string;
 
 	@Column({ name: 'balance_edge', nullable: true, type: "float" })
-    public balanceEdge: number;
+	public balanceEdge: number;
 
 	@CreateDateColumn({ name: 'created_at' })
 	public createdAt?: Date;

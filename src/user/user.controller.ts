@@ -15,6 +15,8 @@ import { Request } from 'express';
 @Controller('user')
 export class UserController {
 
+    private DEFAULT_SORT_CATEGORIES_ORDER = `date`;
+
     constructor(
         private jwtService: JwtService,
         private userService: UserService,
@@ -37,6 +39,7 @@ export class UserController {
             categories: [],
             transactions: [],
             balanceEdge: 0,
+            sortCategoriesBy: this.DEFAULT_SORT_CATEGORIES_ORDER,
             provider: user.provider
         };
         console.log('---> userToSave ', userToSave);

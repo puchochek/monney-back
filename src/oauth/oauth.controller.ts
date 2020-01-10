@@ -8,6 +8,9 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('oauth')
 export class OauthController {
+
+    private DEFAULT_SORT_CATEGORIES_ORDER = `date`;
+
     constructor(
         private userService: UserService,
         private cryptService: CryptService,
@@ -41,6 +44,7 @@ export class OauthController {
                 categories: [],
                 transactions: [],
                 balanceEdge: 0,
+                sortCategoriesBy: this.DEFAULT_SORT_CATEGORIES_ORDER,
                 avatar: googleAuthUser.avatar,
                 provider: `google`
             };

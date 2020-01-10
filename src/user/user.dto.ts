@@ -7,6 +7,7 @@ export class ApplicationUser {
 	readonly provider?: string;
 	readonly isConfirmed: boolean;
 	readonly balanceEdge: boolean;
+	readonly sortCategoriesBy: string;
 }
 
 export class LoginUser {
