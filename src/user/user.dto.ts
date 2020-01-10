@@ -6,8 +6,10 @@ export class ApplicationUser {
 	readonly id?: string;
 	readonly provider?: string;
 	readonly isConfirmed: boolean;
-	readonly balanceEdge: boolean;
+	readonly balanceEdge: number;
 	readonly sortCategoriesBy: string;
+	readonly categories?: [];
+	readonly transactions?: [];
 }
 
 export class LoginUser {

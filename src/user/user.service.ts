@@ -35,6 +35,12 @@ export class UserService {
         return createdUser;
     }
 
+    async updateUser(user: User): Promise<User> {
+
+        return await this.userRepository.save(user);
+    }
+
+
     async getUserByEmail(email: string): Promise<User> {
         const userByEmail = await this.userRepository
             .createQueryBuilder('user')
@@ -93,8 +99,4 @@ export class UserService {
     //     return userByToken;
     // }
 
-    async updateUser(user: User): Promise<User> {
-
-        return await this.userRepository.save(user);
-    }
 }

@@ -1,11 +1,12 @@
 
-import { Controller, Get, Post, UseGuards, Res, Req, Body, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Patch, UseGuards, Res, Req, Body, HttpCode } from '@nestjs/common';
 import { ApplicationUser, LoginUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
 import { CryptService } from '../services/crypt.service';
 import { RegistrationException } from '../exceptions/registration.exception';
 import { LoginException } from '../exceptions/login.exception';
+import { UserException } from '../exceptions/user.exception';
 import { UserService } from '../user/user.service';
 import { JwtGuard } from '../guards/jwt.guard';
 //import { AuthGuard } from '@nestjs/passport';
@@ -82,6 +83,19 @@ export class UserController {
         return userByEmailAndPassword;
     }
 
+    @Patch()
+    async updateUser(@Body() userToUpdate: ApplicationUser): Promise<User> {
+        const userToSave = <User>{ ...userToUpdate };
+        let user: User;
+        try {
+            user = await this.userService.updateUser(userToSave);
+        } catch (error) {
+            throw new UserException(error.message);
+        }
+        console.log('---> updated user ', user);
+        return user;
+    }
+
     @Get()
     async getUserByToken(@Req() request: Request): Promise<User> {
         let token: string;
@@ -93,7 +107,7 @@ export class UserController {
         try {
             userByToken = await this.userService.getUserByToken(token);
         } catch (error) {
-            throw new LoginException(error.message);
+            throw new UserException(error.message);
         }
         console.log('---> getUserByToken controller ', userByToken);
         return userByToken;
