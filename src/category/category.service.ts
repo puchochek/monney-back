@@ -16,10 +16,16 @@ export class CategoryService {
         private readonly categoryRepository: Repository<Category>,
     ) { }
 
-    async upsertCategory(categoriesToUpsert: Category): Promise<Category> {
-        const upsertedCategories = await this.categoryRepository.save(categoriesToUpsert);
+    async saveCategory(categoryToSave: Category): Promise<Category> {
+        const savedCategory = await this.categoryRepository.save(categoryToSave);
 
-        return upsertedCategories;
+        return savedCategory;
+    }
+
+    async updateCategory(categoryToUpdate: Category): Promise<Category> {
+        const updatedCategory = await this.categoryRepository.save(categoryToUpdate);
+
+        return updatedCategory;
     }
 
     async getCategoryByName(categoryName: string, userId: string): Promise<Category> {
