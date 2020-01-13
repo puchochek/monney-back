@@ -1,5 +1,5 @@
 
-import { Controller, Get, Post, Patch, UseGuards, Res, Req, Body, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Patch, UseGuards, Res, Req, Body, HttpCode, Param } from '@nestjs/common';
 import { ApplicationUser, LoginUser } from '../user/user.dto';
 import { User } from '../db/entities/user.entity';
 import { JwtService } from '../services/jwt.service';
@@ -83,6 +83,57 @@ export class UserController {
         return userByEmailAndPassword;
     }
 
+    @Post('avatar')
+    async saveUserAvatarToCloud(@Req() req, @Res() res) {
+
+        const multer = require('multer')
+        const storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                cb(null, 'uploads/');
+            },
+            filename: function (req, file, cb) {
+                cb(null, file.originalname);
+            }
+        });
+        const upload = multer({ storage }).single('avatar');
+
+        upload(req, res, function (err) {
+            if (err) {
+                console.log('---> upload error ', err);
+                return res.send(err);
+            }
+
+            // SEND FILE TO CLOUDINARY
+            const cloudinary = require('cloudinary').v2
+
+            cloudinary.config({
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET
+            })
+
+            const path = req.file.path;
+            const fileName = req.file.originalname;
+
+            cloudinary.uploader.upload(
+                path,
+                { public_id: `avatar/${fileName}`, tags: `avatar` },
+                function (err, image) {
+                    if (err) {
+                        console.log('---> cloudinary ', err);
+                        return res.send(err);
+                    }
+                    // remove file from server
+                    const fs = require('fs');
+                    fs.unlinkSync(path);
+                    // return image details
+                    res.json(image);
+                }
+            )
+        })
+    }
+
+
     @Patch()
     async updateUser(@Body() userToUpdate: ApplicationUser): Promise<User> {
         const userToSave = <User>{ ...userToUpdate };
@@ -102,7 +153,6 @@ export class UserController {
         if (request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]) {
             token = request.headers && request.headers.authorization && request.headers.authorization.split('Bearer ')[1]
         }
-        console.log('---> getUserByToken token ', token);
         let userByToken: User;
         try {
             userByToken = await this.userService.getUserByToken(token);
