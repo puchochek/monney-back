@@ -85,6 +85,15 @@ export class UserController {
 
     @Post('avatar')
     async saveUserAvatarToCloud(@Req() req, @Res() res) {
+        let token: string;
+        let userId: string;
+
+        if (req.headers && req.headers.authorization && req.headers.authorization.split('Bearer ')[1]) {
+            token = req.headers && req.headers.authorization && req.headers.authorization.split('Bearer ')[1]
+        }
+        if (token) {
+            userId = this.jwtService.decodeJwt(token).data;
+        }
 
         const multer = require('multer')
         const storage = multer.diskStorage({
@@ -113,11 +122,10 @@ export class UserController {
             })
 
             const path = req.file.path;
-            const fileName = req.file.originalname;
 
             cloudinary.uploader.upload(
                 path,
-                { public_id: `avatar/${fileName}`, tags: `avatar` },
+                { public_id: `avatar/${userId}`, tags: `avatar` },
                 function (err, image) {
                     if (err) {
                         console.log('---> cloudinary ', err);
@@ -159,7 +167,7 @@ export class UserController {
         } catch (error) {
             throw new UserException(error.message);
         }
-        console.log('---> getUserByToken controller ', userByToken);
+        // console.log('---> getUserByToken controller ', userByToken);
         return userByToken;
     }
 
