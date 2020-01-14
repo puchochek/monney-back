@@ -5,6 +5,7 @@ export const USER_FIELDS = [
     'user.password',
     'user.isConfirmed',
     'user.avatar',
+    'user.balanceEdge',
     'user.sortCategoriesBy',
     'user.createdAt',
     'user.updatedAt',
