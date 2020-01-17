@@ -20,6 +20,10 @@ export class JwtMiddleware implements NestMiddleware {
         console.log('---> req.baseUrl ', req.originalUrl);
         console.log('---> req.body ', req.body);
 
+        if(req.originalUrl === `/user/activate`) {
+            return next();
+        }
+
         if (req.headers && req.headers.authorization && req.headers.authorization.split('Bearer ')[1]) {
             console.log('---> case 1' );
             const oldToken: string = req.headers.authorization.split('Bearer ')[1];
