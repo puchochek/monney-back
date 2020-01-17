@@ -151,7 +151,7 @@ export class UserController {
         } catch (error) {
             throw new UserException(error.message);
         }
-        console.log('---> updated user ', user);
+        //console.log('---> updated user ', user);
         return user;
     }
 
