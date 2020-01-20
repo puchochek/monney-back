@@ -81,7 +81,7 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
             .where("user.id = :id", { id: userId })
             .getOne();
-
+            //console.log('---> userByToken Service ', userByToken);
         return userByToken;
     }
 

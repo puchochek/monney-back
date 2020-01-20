@@ -172,12 +172,9 @@ export class UserController {
     }
 
     validateUserInput(user: ApplicationUser): boolean {
-        const usernameRegexp = new RegExp('[0-9a-zA-Z]{3,30}');
-        const emailRegexp = new RegExp(
-            '^([a-zA-Z0-9_\\-.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9-]+\\.)+))([a-zA-Z]{2,4}|[0-9' +
-            ']{1,3})(\\]?)$',
-        );
-        const passwordRegexp = new RegExp('[0-9a-zA-Z]{6,30}');
+        const usernameRegexp = /[0-9a-zA-Z]{3,30}/;
+        const emailRegexp = /\S+@\S+/;
+        const passwordRegexp = /[0-9a-zA-Z]{6,30}/;
 
         const isPasswordValid = passwordRegexp.test(user.password);
         const isEmailValid = emailRegexp.test(user.email);

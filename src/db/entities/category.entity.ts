@@ -13,11 +13,14 @@ import {
   import { User } from './user.entity';
 
 @Entity()
-@Unique(["name"])
 export class Category {
 
     @PrimaryColumn('uuid')
     public id: string;
+
+    @PrimaryColumn()
+    @Column({ nullable: false })
+    public name: string;
 
     @ManyToOne(type => User, user => user.categories)
     @Column({ nullable: true })
@@ -25,9 +28,6 @@ export class Category {
 
     @OneToMany(type => Transaction, transaction => transaction.category)
     public transactions: Transaction[];
-
-    @Column({ nullable: true })
-    public name: string;
 
     @Column({ nullable: true })
     public description: string;
