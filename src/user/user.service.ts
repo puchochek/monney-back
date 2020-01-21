@@ -61,7 +61,8 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction")
             .where("user.email = :email", { email: user.email })
             .getOne();
-        const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
+        // const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
+        const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : false;
 
         let userByEmailAndPassword: User;
         if (isPassvordConfirmed) {

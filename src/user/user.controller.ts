@@ -79,6 +79,9 @@ export class UserController {
         } catch (error) {
             throw new LoginException(error.message);
         }
+        if (!userByEmailAndPassword) {
+            throw new LoginException(`Autentification error: An user with such credentials was not found.`);
+        }
         console.log('---> userByEmailAndPassword Controller ', userByEmailAndPassword);
         return userByEmailAndPassword;
     }
