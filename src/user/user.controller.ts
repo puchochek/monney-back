@@ -86,6 +86,31 @@ export class UserController {
         return userByEmailAndPassword;
     }
 
+    @Post('password')
+    async resetPassword(@Body() user: LoginUser): Promise<User> {
+        let userByEmail: User;
+        let userWithNewPassword: User;
+        console.log('---> reset pass user ', user);
+        try {
+            userByEmail = await this.userService.getUserByEmail(user.email);
+            userByEmail.password = user.password;
+            try {
+                userWithNewPassword = await this.userService.updateUser(userByEmail);
+                console.log('---> userWithNewPassword ', userWithNewPassword);
+                this.userService.sendResetPasswordEmail(userWithNewPassword);
+            } catch (error) {
+                throw new UserException(error.message);
+            }
+        } catch (error) {
+            throw new LoginException(error.message);
+        }
+        if (!userByEmail) {
+            throw new LoginException(`Autentification error: An user with such email was not found.`);
+        }
+
+        return userWithNewPassword;
+    }
+
     @Post('avatar')
     async saveUserAvatarToCloud(@Req() req, @Res() res) {
         let token: string;
@@ -143,7 +168,6 @@ export class UserController {
             )
         })
     }
-
 
     @Patch()
     async updateUser(@Body() userToUpdate: ApplicationUser): Promise<User> {

@@ -33,4 +33,18 @@ export class EmailService {
             html: `Hello, ${user.name}. Navigate the link to activate your Monney account ${link}`,
         });
     }
+
+    public sendResetPasswordMail(user: User): Promise<any> {
+        const expiresIn = '2 hours';
+        const token = this.jwtService.generateToken(user.id, expiresIn);
+        const link = `<a href="${process.env.CLIENT_URL}/auth/${token}">${process.env.CLIENT_URL}/auth/${token}</a>`;
+
+        return this.server.sendMail({
+            text: `''`,
+            from: `"Monney" <puchochek@gmail.com>`,
+            to: user.email,
+            subject: `Confirm your password in Monney`,
+            html: `Hello, ${user.name}. Navigate the link to activate your new password ${link}`,
+        });
+    }
 }

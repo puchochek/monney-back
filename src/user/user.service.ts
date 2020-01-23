@@ -40,7 +40,6 @@ export class UserService {
         return await this.userRepository.save(user);
     }
 
-
     async getUserByEmail(email: string): Promise<User> {
         const userByEmail = await this.userRepository
             .createQueryBuilder('user')
@@ -49,7 +48,7 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction")
             .where("user.email = :email", { email: email })
             .getOne();
-        console.log('---> getUserByEmail ', userByEmail);
+
         return userByEmail;
     }
 
@@ -61,16 +60,15 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction")
             .where("user.email = :email", { email: user.email })
             .getOne();
-        // const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : true;
+
         const isPassvordConfirmed = userByEmail.password ? this.cryptService.comparePasswords(user.password, userByEmail.password) : false;
 
         let userByEmailAndPassword: User;
         if (isPassvordConfirmed) {
             userByEmailAndPassword = { ...userByEmail };
         }
-        console.log('---> userByEmailAndPassword Service ', userByEmailAndPassword);
-        return userByEmailAndPassword;
 
+        return userByEmailAndPassword;
     }
 
     async getUserByToken(token: string): Promise<User> {
@@ -82,20 +80,17 @@ export class UserService {
             .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
             .where("user.id = :id", { id: userId })
             .getOne();
-            //console.log('---> userByToken Service ', userByToken);
+
         return userByToken;
     }
 
-    // async getUserById(userId: string): Promise<User> {
-    //     const userByToken = await this.userRepository
-    //         .createQueryBuilder('user')
-    //         .select(USER_FIELDS)
-    //         .leftJoinAndSelect("user.categories", "category", "category.isDeleted = false")
-    //         .leftJoinAndSelect("user.transactions", "transaction", "transaction.isDeleted = false")
-    //         .where("user.id = :id", { id: userId })
-    //         .getOne();
-
-    //     return userByToken;
-    // }
+    async sendResetPasswordEmail(user: User) {
+        let emailSendResult;
+        try {
+            emailSendResult = await this.emailService.sendResetPasswordMail(user);
+        } catch (error) {
+            throw new EmailException(`Can't send email: ${error.message}`);
+        }
+    }
 
 }
